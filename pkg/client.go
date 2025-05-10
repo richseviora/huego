@@ -10,9 +10,10 @@ import (
 
 // APIClient handles API communication
 type APIClient struct {
-	baseURL    string
-	httpClient *http.Client
-	timeout    time.Duration
+	baseURL        string
+	httpClient     *http.Client
+	timeout        time.Duration
+	applicationKey string
 }
 
 // ClientOption defines functional options for configuring the APIClient
@@ -39,6 +40,9 @@ func NewAPIClient(baseURL string, opts ...ClientOption) *APIClient {
 func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if c.applicationKey != "" {
+		req.Header.Set("hue-application-key", c.applicationKey)
 	}
 
 	req = req.WithContext(ctx)
