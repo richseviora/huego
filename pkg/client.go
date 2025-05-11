@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/richseviora/huego/pkg/store"
+	"io"
 	"net/http"
 	"time"
 )
@@ -14,19 +17,21 @@ type APIClient struct {
 	httpClient     *http.Client
 	timeout        time.Duration
 	applicationKey string
+	keyStore       store.KeyStore
 }
 
 // ClientOption defines functional options for configuring the APIClient
 type ClientOption func(*APIClient)
 
 // NewAPIClient creates a new API client instance
-func NewAPIClient(baseURL string, opts ...ClientOption) *APIClient {
+func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
 	client := &APIClient{
-		baseURL: baseURL,
+		baseURL: "http://" + ipAddress,
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
-		timeout: 30 * time.Second,
+		timeout:  30 * time.Second,
+		keyStore: store.NewInMemoryKeyStore(),
 	}
 
 	for _, opt := range opts {
@@ -55,15 +60,25 @@ func Get[T any](ctx context.Context, path string, c *APIClient) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Set("Accept", "application/json")
 
 	resp, err := c.Do(ctx, req)
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 
+	fmt.Printf("Response status: %s\n", resp.Status)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %v", err)
+	}
+
 	var result T
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
+		fmt.Printf("Failed to decode response: %v\n", err)
+		fmt.Printf("Response body: %s\n", string(bodyBytes))
 		return nil, err
 	}
 
