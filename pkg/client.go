@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/richseviora/huego/pkg/store"
 	"io"
@@ -13,11 +14,10 @@ import (
 
 // APIClient handles API communication
 type APIClient struct {
-	baseURL        string
-	httpClient     *http.Client
-	timeout        time.Duration
-	applicationKey string
-	keyStore       store.KeyStore
+	baseURL    string
+	httpClient *http.Client
+	timeout    time.Duration
+	keyStore   store.KeyStore
 }
 
 // ClientOption defines functional options for configuring the APIClient
@@ -25,13 +25,18 @@ type ClientOption func(*APIClient)
 
 // NewAPIClient creates a new API client instance
 func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
+	keyStore, err := store.NewDiskKeyStore("hue-keys.json")
+	if err != nil {
+		fmt.Printf("Failed to load key store: %v\n", err)
+		panic(err)
+	}
 	client := &APIClient{
 		baseURL: "http://" + ipAddress,
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
 		timeout:  30 * time.Second,
-		keyStore: store.NewInMemoryKeyStore(),
+		keyStore: keyStore,
 	}
 
 	for _, opt := range opts {
@@ -41,13 +46,30 @@ func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
 	return client
 }
 
+func (c *APIClient) Initialize(ctx context.Context) error {
+	key, err := c.getApplicationKey(ctx)
+	if err != nil && !errors.Is(err, store.ErrKeyNotFound) {
+		return err
+	}
+	if key != "" {
+		// Key Set do nothing
+		return nil
+	}
+	// Get Attempt to Set Key
+	return CreateApplicationKey(ctx, c)
+}
+
 // Do executes an HTTP request and returns the response
 func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if c.applicationKey != "" {
-		req.Header.Set("hue-application-key", c.applicationKey)
+	key, err := c.getApplicationKey(ctx)
+	if err != nil && !errors.Is(err, store.ErrKeyNotFound) {
+		return nil, err
+	}
+	if key != "" {
+		req.Header.Set("hue-application-key", key)
 	}
 
 	req = req.WithContext(ctx)
@@ -110,4 +132,40 @@ func Post[T any](ctx context.Context, path string, body interface{}, c *APIClien
 	}
 
 	return &result, nil
+}
+
+func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
+	key, err := c.keyStore.Get("application-key")
+	if err != nil {
+		return "", err
+	}
+	return key.(string), nil
+}
+
+func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
+	return c.keyStore.Set("application-key", key)
+}
+
+type CreateUserRequest struct {
+	devicetype        string `json:"devicetype"`
+	generateClientKey bool   `json:"generateclientkey"`
+}
+
+func CreateApplicationKey(ctx context.Context, c *APIClient) error {
+	res, err := c.RegisterDevice(ctx, "huego", "1234567890")
+	if err != nil {
+		fmt.Printf("Failed to register device: %v\n", err)
+		return err
+	}
+	for _, response := range *res {
+		if response.Success != nil {
+			return c.setApplicationKey(ctx, response.Success.Username)
+		}
+		if response.Error != nil {
+			fmt.Printf("Failed to register device %v", response.Error)
+			return errors.New("failed to register device")
+		}
+	}
+
+	return errors.New("failed to register device")
 }

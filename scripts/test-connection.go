@@ -12,6 +12,11 @@ import (
 
 func TestConnection(ipAddress string) error {
 	client := pkg.NewAPIClient(ipAddress)
+	err := client.Initialize(context.Background())
+	if err != nil {
+		fmt.Printf("Initialization Failed: %v\n", err)
+		return err
+	}
 	lightService := resources.NewLightService(client)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -8,17 +8,30 @@ type BridgeRegistrationRequest struct {
 	GenerateClientKey bool   `json:"generateclientkey"`
 }
 
-// BridgeRegistrationResponse represents the registration response
-type BridgeRegistrationResponse struct {
-	Success map[string]string `json:"success"`
-	Error   map[string]string `json:"error"`
+type BridgeRegistrationSuccess struct {
+	Username  string `json:"username"`
+	ClientKey string `json:"clientkey"`
 }
 
+type BridgeRegistrationError struct {
+	Type        int    `json:"type"`
+	Address     string `json:"address"`
+	Description string `json:"description"`
+}
+
+// BridgeRegistrationResponse represents the registration response
+type BridgeRegistrationResponse struct {
+	Success *BridgeRegistrationSuccess `json:"success"`
+	Error   *BridgeRegistrationError   `json:"error"`
+}
+
+type BridgeRegistrationResponseBody = []BridgeRegistrationResponse
+
 // RegisterDevice sends a registration request to the Hue bridge
-func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName string) (*BridgeRegistrationResponse, error) {
+func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName string) (*BridgeRegistrationResponseBody, error) {
 	request := BridgeRegistrationRequest{
 		DeviceType:        appName + "#" + instanceName,
 		GenerateClientKey: true,
 	}
-	return Post[BridgeRegistrationResponse](ctx, "/api", request, c)
+	return Post[BridgeRegistrationResponseBody](ctx, "/api", request, c)
 }
