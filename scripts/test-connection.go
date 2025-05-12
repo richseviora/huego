@@ -30,7 +30,7 @@ func TestConnection(ipAddress string) error {
 
 	fmt.Printf("Connection successful! Found %d lights\n", len(lights.Data))
 	for _, light := range lights.Data {
-		fmt.Printf("- Light: %s (ID: %s)\n", light.Name, light.ID)
+		fmt.Printf("- Light: %s (ID: %s)\n", light.Metadata.Name, light.ID)
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package pkg
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -30,10 +31,14 @@ func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
 		fmt.Printf("Failed to load key store: %v\n", err)
 		panic(err)
 	}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	client := &APIClient{
-		baseURL: "http://" + ipAddress,
+		baseURL: "https://" + ipAddress,
 		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
+			Transport: tr,
+			Timeout:   30 * time.Second,
 		},
 		timeout:  30 * time.Second,
 		keyStore: keyStore,
@@ -82,6 +87,7 @@ func Get[T any](ctx context.Context, path string, c *APIClient) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := c.Do(ctx, req)
