@@ -7,7 +7,7 @@ import (
 	"github.com/richseviora/huego/pkg"
 )
 
-type Owner struct {
+type Reference struct {
 	RID   string `json:"rid"`
 	RType string `json:"rtype"`
 }
@@ -49,6 +49,10 @@ type Color struct {
 }
 
 type ColorTemperature struct {
+	Mirek int `json:"mirek"`
+}
+
+type ColorTemperatureInfo struct {
 	Mirek       int  `json:"mirek"`
 	MirekValid  bool `json:"mirek_valid"`
 	MirekSchema struct {
@@ -69,22 +73,22 @@ type PowerUp struct {
 		Dimming Dimming `json:"dimming"`
 	}
 	Color struct {
-		Mode      string           `json:"mode"`
-		ColorTemp ColorTemperature `json:"color_temperature"`
+		Mode      string               `json:"mode"`
+		ColorTemp ColorTemperatureInfo `json:"color_temperature"`
 	}
 }
 
 // Light represents the light resource data
 type Light struct {
-	ID        string           `json:"id"`
-	IDv1      string           `json:"idv1"`
-	Metadata  LightMetadata    `json:"metadata"`
-	Owner     Owner            `json:"owner"`
-	On        LightOn          `json:"on"`
-	Dimming   DimmingInfo      `json:"dimming"`
-	ColorTemp ColorTemperature `json:"color_temperature"`
-	Color     Color            `json:"color"`
-	Type      string           `json:"type"`
+	ID        string               `json:"id"`
+	IDv1      string               `json:"idv1"`
+	Metadata  LightMetadata        `json:"metadata"`
+	Owner     Reference            `json:"owner"`
+	On        LightOn              `json:"on"`
+	Dimming   DimmingInfo          `json:"dimming"`
+	ColorTemp ColorTemperatureInfo `json:"color_temperature"`
+	Color     Color                `json:"color"`
+	Type      string               `json:"type"`
 }
 
 type ResourceList[T any] struct {
