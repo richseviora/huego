@@ -6,12 +6,11 @@ import (
 	"github.com/richseviora/huego/pkg/store"
 	"time"
 
-	"github.com/richseviora/huego/pkg"
 	"github.com/richseviora/huego/pkg/resources"
 )
 
 func TestConnection(ipAddress string) error {
-	client := pkg.NewAPIClient(ipAddress)
+	client := resources.NewAPIClient(ipAddress)
 	err := client.Initialize(context.Background())
 	if err != nil {
 		fmt.Printf("Initialization Failed: %v\n", err)

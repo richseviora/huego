@@ -3,8 +3,6 @@ package resources
 import (
 	"context"
 	"fmt"
-
-	"github.com/richseviora/huego/pkg"
 )
 
 type Reference struct {
@@ -98,11 +96,11 @@ type ResourceList[T any] struct {
 
 // LightService handles light-related API operations
 type LightService struct {
-	client *pkg.APIClient
+	client *APIClient
 }
 
 // NewLightService creates a new LightService instance
-func NewLightService(client *pkg.APIClient) *LightService {
+func NewLightService(client *APIClient) *LightService {
 	return &LightService{
 		client: client,
 	}
@@ -110,10 +108,10 @@ func NewLightService(client *pkg.APIClient) *LightService {
 
 // GetLight retrieves a single light by its ID
 func (s *LightService) GetLight(ctx context.Context, id string) (*Light, error) {
-	return pkg.Get[Light](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
+	return Get[Light](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
 }
 
 // GetAllLights retrieves all available lights
 func (s *LightService) GetAllLights(ctx context.Context) (*ResourceList[Light], error) {
-	return pkg.Get[ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
+	return Get[ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
 }

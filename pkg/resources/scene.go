@@ -1,5 +1,10 @@
 package resources
 
+import (
+	"context"
+	"fmt"
+)
+
 type Action struct {
 	Target Reference `json:"target"`
 	Action struct {
@@ -30,4 +35,22 @@ type Scene struct {
 		LastRecall string `json:"last_recall"`
 	}
 	Type string `json:"type"`
+}
+
+type SceneService struct {
+	client *APIClient
+}
+
+func NewSceneService(client *APIClient) *SceneService {
+	return &SceneService{
+		client: client,
+	}
+}
+
+func (s *SceneService) GetAllScenes(ctx context.Context) (*ResourceList[Scene], error) {
+	return Get[ResourceList[Scene]](ctx, "/clip/v2/resource/scene", s.client)
+}
+
+func (s *SceneService) GetScene(ctx context.Context, id string) (*Scene, error) {
+	return Get[Scene](ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
 }
