@@ -1,0 +1,210 @@
+{
+  "errors": [],
+  "data": [
+    {
+      "id": "0d960eab-68c6-4ed7-8c0d-a24ca756d58e",
+      "id_v1": "/groups/81",
+      "children": [
+        {
+          "rid": "d4aed2f9-9bf4-4597-a2b9-f9040eeb88c7",
+          "rtype": "device"
+        },
+        {
+          "rid": "cdb7e375-589e-47c7-b785-a91f2c7160d8",
+          "rtype": "device"
+        },
+        {
+          "rid": "1226a518-f519-4b12-9c83-5f054036438d",
+          "rtype": "device"
+        },
+        {
+          "rid": "7c8d21df-8519-43a0-a8de-05c88896f65d",
+          "rtype": "device"
+        },
+        {
+          "rid": "87f26aa2-4148-4147-98ac-4c51fb967ef2",
+          "rtype": "device"
+        },
+        {
+          "rid": "e2faead8-647c-4679-8bcb-7dbf2ae511ee",
+          "rtype": "device"
+        }
+      ],
+      "services": [
+        {
+          "rid": "77db9b73-6832-4bc2-9ead-ff0e8d5f494f",
+          "rtype": "grouped_light"
+        }
+      ],
+      "metadata": {
+        "name": "Bathroom",
+        "archetype": "bathroom"
+      },
+      "type": "room"
+    },
+    {
+      "id": "7d696d52-4940-45ae-b1c5-6393632e55d4",
+      "id_v1": "/groups/82",
+      "children": [
+        {
+          "rid": "1f98d388-837b-42a6-bb94-f39451f35079",
+          "rtype": "device"
+        },
+        {
+          "rid": "e36a0164-0906-4f2a-b152-ab92c35b5792",
+          "rtype": "device"
+        }
+      ],
+      "services": [
+        {
+          "rid": "7d69c84f-95dd-4de6-a9d2-3d6bac633a33",
+          "rtype": "grouped_light"
+        }
+      ],
+      "metadata": {
+        "name": "Hallway",
+        "archetype": "hallway"
+      },
+      "type": "room"
+    },
+    {
+      "id": "8afe4695-0165-40e7-be2f-bd984c3909e9",
+      "id_v1": "/groups/6",
+      "children": [
+        {
+          "rid": "f51b25a6-c369-4683-888e-ecd7f4804835",
+          "rtype": "device"
+        },
+        {
+          "rid": "8c7401f1-d955-4c03-9686-25972e9377c8",
+          "rtype": "device"
+        },
+        {
+          "rid": "ee0f6fde-f2cd-401a-8fdf-dd33a50e4583",
+          "rtype": "device"
+        },
+        {
+          "rid": "e6d659cf-8f01-40a6-bdc3-4e999f685ff6",
+          "rtype": "device"
+        },
+        {
+          "rid": "55ad97cc-bcf9-4e97-a2ab-a18ca36c9e79",
+          "rtype": "device"
+        },
+        {
+          "rid": "f22e0b93-0b33-496f-806c-fa0a9fcdec4b",
+          "rtype": "device"
+        }
+      ],
+      "services": [
+        {
+          "rid": "64bb8df2-a7d8-4c82-a9b8-10f5478e9652",
+          "rtype": "grouped_light"
+        }
+      ],
+      "metadata": {
+        "name": "Kitchen",
+        "archetype": "kitchen"
+      },
+      "type": "room"
+    },
+    {
+      "id": "dee87df0-25e9-4584-b381-e6cdea803118",
+      "id_v1": "/groups/2",
+      "children": [
+        {
+          "rid": "ed374b73-3bbc-4adc-be58-bf08a707c329",
+          "rtype": "device"
+        },
+        {
+          "rid": "2980c440-b14a-4afd-96ca-5e7e06428d4c",
+          "rtype": "device"
+        },
+        {
+          "rid": "b8fbab13-2313-40a8-b82c-196f00873246",
+          "rtype": "device"
+        },
+        {
+          "rid": "a66b9321-36f1-44c1-bfec-637aa6c0ac9a",
+          "rtype": "device"
+        },
+        {
+          "rid": "31ae4d1d-906e-4435-8e8f-bd12b44850a3",
+          "rtype": "device"
+        },
+        {
+          "rid": "9b12d4bd-3eaa-4117-b347-54372d0875b6",
+          "rtype": "device"
+        },
+        {
+          "rid": "5c7f7ba1-d600-47fb-a004-bf32653c2b97",
+          "rtype": "device"
+        },
+        {
+          "rid": "b65ec78c-f9cd-4b3c-9e7f-a647ad266269",
+          "rtype": "device"
+        },
+        {
+          "rid": "cddffc73-74d7-4dc3-85bf-478c226aba5b",
+          "rtype": "device"
+        },
+        {
+          "rid": "86f6249a-bc35-4af5-96ef-97b8e45a72ac",
+          "rtype": "device"
+        },
+        {
+          "rid": "e480f30b-4900-4abd-8efa-937a6c8a1ea6",
+          "rtype": "device"
+        }
+      ],
+      "services": [
+        {
+          "rid": "71975be1-8d7a-44cc-9435-448af5a38212",
+          "rtype": "grouped_light"
+        }
+      ],
+      "metadata": {
+        "name": "Living Room",
+        "archetype": "living_room"
+      },
+      "type": "room"
+    },
+    {
+      "id": "ef4e44b7-f5d2-4ae0-8605-8d1940ebcb55",
+      "id_v1": "/groups/5",
+      "children": [
+        {
+          "rid": "da83553a-736f-48dd-81b0-244eec9a681f",
+          "rtype": "device"
+        },
+        {
+          "rid": "73036034-1ad6-40ca-b5e4-1907570b505f",
+          "rtype": "device"
+        },
+        {
+          "rid": "2ad04a3c-dfee-432f-a7af-c22aceefe722",
+          "rtype": "device"
+        },
+        {
+          "rid": "e8c338bc-6f29-4a01-a5b6-a46f106576fc",
+          "rtype": "device"
+        },
+        {
+          "rid": "4757f16c-7e66-4646-b854-d96471409ec4",
+          "rtype": "device"
+        }
+      ],
+      "services": [
+        {
+          "rid": "bd6bf4c9-77a4-4afc-be46-e894a8a6d5c5",
+          "rtype": "grouped_light"
+        }
+      ],
+      "metadata": {
+        "name": "Bedroom",
+        "archetype": "bedroom"
+      },
+      "type": "room"
+    }
+  ]
+}
