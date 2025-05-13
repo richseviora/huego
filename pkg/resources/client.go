@@ -10,6 +10,7 @@ import (
 	"github.com/richseviora/huego/pkg/store"
 	"io"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -145,6 +146,10 @@ func Post[T any](ctx context.Context, path string, body interface{}, c *APIClien
 }
 
 func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
+	if envKey := os.Getenv("HUE_KEY"); envKey != "" {
+		return envKey, nil
+	}
+
 	key, err := c.keyStore.Get("application-key")
 	if err != nil {
 		return "", err
