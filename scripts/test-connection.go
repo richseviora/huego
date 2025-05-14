@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/pkg/resources"
 	"github.com/richseviora/huego/pkg/store"
 	"time"
-
-	"github.com/richseviora/huego/pkg/resources"
 )
 
 func TestConnection(ipAddress string) error {
