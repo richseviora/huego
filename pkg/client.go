@@ -15,7 +15,7 @@ func NewClientFromMDNS() (*resources.APIClient, error) {
 	if len(bridges) == 0 {
 		return nil, errors.New("no bridges found")
 	}
-	client := resources.NewAPIClient(bridges[0].InternalIPAddress)
+	client := resources.NewAPIClient(bridges[0].InternalIPAddress, resources.EnvOnly)
 	err = client.Initialize(context.Background())
 	if err != nil {
 		return nil, err

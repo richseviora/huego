@@ -14,12 +14,25 @@ import (
 	"time"
 )
 
+// InitMode defines the initialization mode for the API client
+type InitMode int
+
+const (
+	// EnvOnly uses only environment variables for initialization
+	EnvOnly InitMode = iota
+	// EnvThenLocal tries environment variables first, then local storage
+	EnvThenLocal
+	// LocalOnly uses only local storage for initialization
+	LocalOnly
+)
+
 // APIClient handles API communication
 type APIClient struct {
 	baseURL      string
 	httpClient   *http.Client
 	timeout      time.Duration
 	keyStore     store.KeyStore
+	initMode     InitMode
 	LightService *LightService
 	SceneService *SceneService
 }
@@ -28,12 +41,17 @@ type APIClient struct {
 type ClientOption func(*APIClient)
 
 // NewAPIClient creates a new API client instance
-func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
-	keyStore, err := store.NewDiskKeyStore("hue-keys.json")
-	if err != nil {
-		fmt.Printf("Failed to load key store: %v\n", err)
-		panic(err)
+func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *APIClient {
+	var keyStore store.KeyStore = nil
+	var err error = nil
+	if initMode != EnvOnly {
+		keyStore, err = store.NewDiskKeyStore("hue-keys.json")
+		if err != nil {
+			fmt.Printf("Failed to load key store: %v\n", err)
+			panic(err)
+		}
 	}
+
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -45,6 +63,7 @@ func NewAPIClient(ipAddress string, opts ...ClientOption) *APIClient {
 		},
 		timeout:  30 * time.Second,
 		keyStore: keyStore,
+		initMode: initMode,
 	}
 	client.SceneService = NewSceneService(client)
 	client.LightService = NewLightService(client)
@@ -146,18 +165,35 @@ func Post[T any](ctx context.Context, path string, body interface{}, c *APIClien
 }
 
 func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
-	if envKey := os.Getenv("HUE_KEY"); envKey != "" {
-		return envKey, nil
+	switch c.initMode {
+	case EnvOnly:
+		key := os.Getenv("HUE_KEY")
+		if key == "" {
+			return "", store.ErrKeyNotFound
+		}
+		return key, nil
+	case LocalOnly:
+		key, err := c.keyStore.Get("application-key")
+		if err != nil {
+			return "", err
+		}
+		return key.(string), nil
+	default: // EnvThenLocal
+		if envKey := os.Getenv("HUE_KEY"); envKey != "" {
+			return envKey, nil
+		}
+		key, err := c.keyStore.Get("application-key")
+		if err != nil {
+			return "", err
+		}
+		return key.(string), nil
 	}
-
-	key, err := c.keyStore.Get("application-key")
-	if err != nil {
-		return "", err
-	}
-	return key.(string), nil
 }
 
 func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
+	if c.initMode == EnvOnly {
+		return errors.New("key store is disabled")
+	}
 	return c.keyStore.Set("application-key", key)
 }
 

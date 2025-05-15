@@ -59,6 +59,14 @@ type ColorTemperatureInfo struct {
 	}
 }
 
+type LightUpdate struct {
+	ID       string `json:-`
+	Metadata *struct {
+		Name     *string `json:"name"`
+		Function *string `json:"function"`
+	} `json:"metadata"`
+}
+
 type PowerUp struct {
 	Preset     string `json:"preset"`
 	Configured bool   `json:"configured"`
@@ -108,10 +116,29 @@ func NewLightService(client *APIClient) *LightService {
 
 // GetLight retrieves a single light by its ID
 func (s *LightService) GetLight(ctx context.Context, id string) (*Light, error) {
-	return Get[Light](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
+	result, err := Get[ResourceList[Light]](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
+	if result == nil || len(result.Data) == 0 {
+		return nil, fmt.Errorf("light not found")
+	}
+	firstLight := result.Data[0]
+	if firstLight.ID != id {
+		return nil, fmt.Errorf("light not found")
+	}
+	return &firstLight, err
 }
 
 // GetAllLights retrieves all available lights
 func (s *LightService) GetAllLights(ctx context.Context) (*ResourceList[Light], error) {
 	return Get[ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
+}
+
+func (s *LightService) UpdateLight(ctx context.Context, update LightUpdate) (*Light, error) {
+	result, err := Post[ResourceList[Light]](ctx, "/clip/v2/resource/light"+update.ID, update, s.client)
+	if err != nil {
+		return nil, err
+	}
+	if len(result.Data) == 0 {
+		return nil, fmt.Errorf("light not found")
+	}
+	return &result.Data[0], nil
 }
