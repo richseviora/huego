@@ -164,6 +164,32 @@ func Post[T any](ctx context.Context, path string, body interface{}, c *APIClien
 	return &result, nil
 }
 
+func Put[T any](ctx context.Context, path string, body interface{}, c *APIClient) (*T, error) {
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, c.baseURL+path, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.Do(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result T
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
 	switch c.initMode {
 	case EnvOnly:

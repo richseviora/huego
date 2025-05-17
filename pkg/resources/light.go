@@ -107,6 +107,13 @@ type LightService struct {
 	client *APIClient
 }
 
+type LightUpdateResponse struct {
+	Errors []struct {
+		Description string `json:"description"`
+	} `json:"errors"`
+	Data []Reference `json:"data"`
+}
+
 // NewLightService creates a new LightService instance
 func NewLightService(client *APIClient) *LightService {
 	return &LightService{
@@ -132,13 +139,13 @@ func (s *LightService) GetAllLights(ctx context.Context) (*ResourceList[Light], 
 	return Get[ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
 }
 
-func (s *LightService) UpdateLight(ctx context.Context, update LightUpdate) (*Light, error) {
-	result, err := Post[ResourceList[Light]](ctx, "/clip/v2/resource/light"+update.ID, update, s.client)
+func (s *LightService) UpdateLight(ctx context.Context, update LightUpdate) error {
+	result, err := Put[LightUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if len(result.Data) == 0 {
-		return nil, fmt.Errorf("light not found")
+	if len(result.Errors) > 0 {
+		return fmt.Errorf("failed to update light: %v", result.Errors)
 	}
-	return &result.Data[0], nil
+	return nil
 }
