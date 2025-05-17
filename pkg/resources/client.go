@@ -170,7 +170,7 @@ func Put[T any](ctx context.Context, path string, body interface{}, c *APIClient
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+path, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPut, c.baseURL+path, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err
 	}
