@@ -51,7 +51,7 @@ const (
 	InvalidArea
 )
 
-var areaNames = [...]string{
+var AreaNames = [...]string{
 	"living_room",
 	"kitchen",
 	"dining",
@@ -97,15 +97,15 @@ var areaNames = [...]string{
 
 // String returns the original snake-case token (or "Area(<n>)" if out of range).
 func (a Area) String() string {
-	if int(a) < 0 || int(a) >= len(areaNames) {
+	if int(a) < 0 || int(a) >= len(AreaNames) {
 		return fmt.Sprintf("Area(%d)", a)
 	}
-	return areaNames[a]
+	return AreaNames[a]
 }
 
 // ParseArea converts a string like "living_room" back into the enum.
 func ParseArea(s string) (Area, error) {
-	for i, name := range areaNames {
+	for i, name := range AreaNames {
 		if name == s {
 			return Area(i), nil
 		}
