@@ -107,7 +107,7 @@ type LightService struct {
 	client *APIClient
 }
 
-type LightUpdateResponse struct {
+type ResourceUpdateResponse struct {
 	Errors []struct {
 		Description string `json:"description"`
 	} `json:"errors"`
@@ -127,11 +127,14 @@ func (s *LightService) GetLight(ctx context.Context, id string) (*Light, error) 
 	if result == nil || len(result.Data) == 0 {
 		return nil, fmt.Errorf("light not found")
 	}
-	firstLight := result.Data[0]
-	if firstLight.ID != id {
+	room, err := FirstOrError(result)
+	if err != nil {
 		return nil, fmt.Errorf("light not found")
 	}
-	return &firstLight, err
+	if room.ID != id {
+		return nil, fmt.Errorf("light not found")
+	}
+	return room, nil
 }
 
 // GetAllLights retrieves all available lights
@@ -140,7 +143,7 @@ func (s *LightService) GetAllLights(ctx context.Context) (*ResourceList[Light], 
 }
 
 func (s *LightService) UpdateLight(ctx context.Context, update LightUpdate) error {
-	result, err := Put[LightUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
+	result, err := Put[ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
 		return err
 	}

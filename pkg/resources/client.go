@@ -35,6 +35,7 @@ type APIClient struct {
 	initMode     InitMode
 	LightService *LightService
 	SceneService *SceneService
+	RoomService  *RoomService
 }
 
 // ClientOption defines functional options for configuring the APIClient
@@ -67,6 +68,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	}
 	client.SceneService = NewSceneService(client)
 	client.LightService = NewLightService(client)
+	client.RoomService = NewRoomService(client)
 
 	for _, opt := range opts {
 		opt(client)
