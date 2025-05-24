@@ -2,6 +2,7 @@ package resources
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -101,6 +102,25 @@ func (a Area) String() string {
 		return fmt.Sprintf("Area(%d)", a)
 	}
 	return AreaNames[a]
+}
+
+// UnmarshalJSON implements json.Unmarshaler interface for Area
+func (a *Area) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	parsed, err := ParseArea(s)
+	if err != nil {
+		return err
+	}
+	*a = parsed
+	return nil
+}
+
+// MarshalJSON implements json.Marshaler interface for Area
+func (a Area) MarshalJSON() ([]byte, error) {
+	return json.Marshal(a.String())
 }
 
 // ParseArea converts a string like "living_room" back into the enum.
