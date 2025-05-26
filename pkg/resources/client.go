@@ -139,6 +139,26 @@ func Get[T any](ctx context.Context, path string, c *APIClient) (*T, error) {
 	return &result, nil
 }
 
+// Delete performs a DELETE request for the specified resource
+func Delete(ctx context.Context, path string, c *APIClient) error {
+	req, err := http.NewRequest(http.MethodDelete, c.baseURL+path, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.Do(ctx, req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("delete request failed with status: %s", resp.Status)
+	}
+
+	return nil
+}
+
 // Post performs a POST request and unmarshals the response into the provided type
 func Post[T any](ctx context.Context, path string, body interface{}, c *APIClient) (*T, error) {
 	jsonBody, err := json.Marshal(body)

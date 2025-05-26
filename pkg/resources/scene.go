@@ -99,3 +99,15 @@ func (s *SceneService) GetAllScenes(ctx context.Context) (*ResourceList[SceneDat
 func (s *SceneService) GetScene(ctx context.Context, id string) (*SceneData, error) {
 	return Get[SceneData](ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
 }
+
+func (s *SceneService) UpdateScene(ctx context.Context, id string, scene *SceneData) (*SceneData, error) {
+	return Put[SceneData](ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), scene, s.client)
+}
+
+func (s *SceneService) CreateScene(ctx context.Context, scene *SceneData) (*SceneData, error) {
+	return Post[SceneData](ctx, "/clip/v2/resource/scene", scene, s.client)
+}
+
+func (s *SceneService) DeleteScene(ctx context.Context, id string) error {
+	return Delete(ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
+}
