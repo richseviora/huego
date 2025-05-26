@@ -97,11 +97,17 @@ var AreaNames = [...]string{
 }
 
 // String returns the original snake-case token (or "Area(<n>)" if out of range).
-func (a Area) String() string {
-	if int(a) < 0 || int(a) >= len(AreaNames) {
+func (a *Area) String() string {
+	var s string
+	if a == nil {
+		return AreaNames[InvalidArea]
+	}
+	index := int(*a)
+	if index < 0 || index >= len(AreaNames) {
 		return fmt.Sprintf("Area(%d)", a)
 	}
-	return AreaNames[a]
+	s = AreaNames[index]
+	return s
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface for Area
@@ -119,7 +125,7 @@ func (a *Area) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler interface for Area
-func (a Area) MarshalJSON() ([]byte, error) {
+func (a *Area) MarshalJSON() ([]byte, error) {
 	return json.Marshal(a.String())
 }
 
