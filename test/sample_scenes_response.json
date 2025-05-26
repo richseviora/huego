@@ -500,7 +500,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -849,17 +849,6 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
-            "rtype": "light"
-          },
-          "action": {
-            "on": {
-              "on": false
-            }
-          }
-        },
-        {
-          "target": {
             "rid": "201b9d44-c7dc-4d70-9b5e-adb12aa8b7d0",
             "rtype": "light"
           },
@@ -919,6 +908,26 @@
           "action": {
             "on": {
               "on": false
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 9.88
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999996,
+                "y": 0.40420000000000019
+              }
             }
           }
         }
@@ -1430,7 +1439,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-11T00:19:08.789Z"
+        "last_recall": "2025-05-26T04:26:34.677Z"
       },
       "type": "scene"
     },
@@ -1556,7 +1565,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-07T23:39:51.293Z"
+        "last_recall": "2025-05-23T22:41:39.845Z"
       },
       "type": "scene"
     },
@@ -5005,7 +5014,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-09T02:03:11.434Z"
+        "last_recall": "2025-05-24T06:47:08.567Z"
       },
       "type": "scene"
     },
@@ -5947,7 +5956,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -5955,7 +5964,7 @@
               "on": true
             },
             "dimming": {
-              "brightness": 10.0
+              "brightness": 0.0
             },
             "color": {
               "xy": {
@@ -6723,7 +6732,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-09T02:03:12.422Z"
+        "last_recall": "2025-05-16T04:57:10.915Z"
       },
       "type": "scene"
     },
@@ -6866,7 +6875,8 @@
       "speed": 0.603,
       "auto_dynamic": false,
       "status": {
-        "active": "inactive"
+        "active": "inactive",
+        "last_recall": "2025-05-24T06:47:12.796Z"
       },
       "type": "scene"
     },
@@ -6874,23 +6884,6 @@
       "id": "68b39f81-1c15-4c82-bd0b-ab28606f3d2e",
       "id_v1": "/scenes/WTQ76N28uYqSzkRg",
       "actions": [
-        {
-          "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
-            "rtype": "light"
-          },
-          "action": {
-            "on": {
-              "on": true
-            },
-            "dimming": {
-              "brightness": 100.0
-            },
-            "color_temperature": {
-              "mirek": 370
-            }
-          }
-        },
         {
           "target": {
             "rid": "646a60ec-ead5-4306-988b-7732223e978f",
@@ -6975,6 +6968,23 @@
               "mirek": 370
             }
           }
+        },
+        {
+          "target": {
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 100.0
+            },
+            "color_temperature": {
+              "mirek": 370
+            }
+          }
         }
       ],
       "palette": {
@@ -7009,7 +7019,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-12T17:09:06.655Z"
+        "last_recall": "2025-05-26T21:13:01.316Z"
       },
       "type": "scene"
     },
@@ -7272,7 +7282,8 @@
       "speed": 0.603,
       "auto_dynamic": false,
       "status": {
-        "active": "inactive"
+        "active": "inactive",
+        "last_recall": "2025-05-13T02:41:58.934Z"
       },
       "type": "scene"
     },
@@ -7794,6 +7805,179 @@
       "type": "scene"
     },
     {
+      "id": "7ee49180-1b76-4c2f-ab8d-8122f0e4eda4",
+      "id_v1": "/scenes/8QZSGy84EHcweND6",
+      "actions": [
+        {
+          "target": {
+            "rid": "c3b29fce-6e2d-40b0-a79b-fec72b56bc2c",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "b4258a0e-2c5b-4799-b364-b3dfc283ce63",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "8a9f1968-6b7c-4dd9-9007-bf5f6bcb0473",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "7920893e-54c1-492d-8c8c-82a05ab2e544",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "78e0ced5-9140-45f4-b97b-3a4bfc44c5b9",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "345e58eb-c321-4303-a427-a687f93487e1",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 35.0
+            },
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            }
+          }
+        }
+      ],
+      "palette": {
+        "color": [
+          {
+            "color": {
+              "xy": {
+                "x": 0.5609999999999998,
+                "y": 0.4042000000000001
+              }
+            },
+            "dimming": {
+              "brightness": 35.0
+            }
+          }
+        ],
+        "dimming": [],
+        "color_temperature": [
+          {
+            "color_temperature": {
+              "mirek": 500
+            },
+            "dimming": {
+              "brightness": 35.0
+            }
+          }
+        ],
+        "effects": [],
+        "effects_v2": []
+      },
+      "recall": {},
+      "metadata": {
+        "name": "Rest",
+        "image": {
+          "rid": "11a09ad5-8d65-4e90-959b-f05981a9ab1b",
+          "rtype": "public_image"
+        }
+      },
+      "group": {
+        "rid": "8afe4695-0165-40e7-be2f-bd984c3909e9",
+        "rtype": "room"
+      },
+      "speed": 0.603,
+      "auto_dynamic": false,
+      "status": {
+        "active": "inactive",
+        "last_recall": "2025-05-13T02:41:51.359Z"
+      },
+      "type": "scene"
+    },
+    {
       "id": "8080f1f0-5793-469c-864b-928f8270af32",
       "id_v1": "/scenes/840l5gXHP4LLKfxO",
       "actions": [
@@ -8292,7 +8476,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -9123,7 +9307,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-09T02:03:05.418Z"
+        "last_recall": "2025-05-24T06:47:01.029Z"
       },
       "type": "scene"
     },
@@ -9266,7 +9450,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-12T17:09:34.287Z"
+        "last_recall": "2025-05-26T21:19:56.838Z"
       },
       "type": "scene"
     },
@@ -9761,7 +9945,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-11T00:19:00.337Z"
+        "last_recall": "2025-05-20T02:39:48.141Z"
       },
       "type": "scene"
     },
@@ -10256,7 +10440,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-12T03:29:43.671Z"
+        "last_recall": "2025-05-16T01:32:26.933Z"
       },
       "type": "scene"
     },
@@ -11393,7 +11577,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-11T00:18:59.229Z"
+        "last_recall": "2025-05-20T02:39:50.287Z"
       },
       "type": "scene"
     },
@@ -11888,7 +12072,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-11T04:35:17.902Z"
+        "last_recall": "2025-05-16T03:02:09.653Z"
       },
       "type": "scene"
     },
@@ -12251,7 +12435,8 @@
       "speed": 0.603,
       "auto_dynamic": false,
       "status": {
-        "active": "inactive"
+        "active": "inactive",
+        "last_recall": "2025-05-16T03:02:05.580Z"
       },
       "type": "scene"
     },
@@ -13725,7 +13910,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-12T03:43:00.056Z"
+        "last_recall": "2025-05-20T02:39:55.808Z"
       },
       "type": "scene"
     },
@@ -14220,7 +14405,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-11T00:20:13.227Z"
+        "last_recall": "2025-05-24T06:47:06.029Z"
       },
       "type": "scene"
     },
@@ -15441,7 +15626,7 @@
       "auto_dynamic": false,
       "status": {
         "active": "inactive",
-        "last_recall": "2025-05-12T17:12:08.019Z"
+        "last_recall": "2025-05-26T21:19:56.260Z"
       },
       "type": "scene"
     },
@@ -16031,7 +16216,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -17270,7 +17455,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -18301,23 +18486,6 @@
       "actions": [
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
-            "rtype": "light"
-          },
-          "action": {
-            "on": {
-              "on": true
-            },
-            "dimming": {
-              "brightness": 30.0
-            },
-            "color_temperature": {
-              "mirek": 370
-            }
-          }
-        },
-        {
-          "target": {
             "rid": "646a60ec-ead5-4306-988b-7732223e978f",
             "rtype": "light"
           },
@@ -18387,6 +18555,23 @@
         {
           "target": {
             "rid": "e4806fac-e561-4823-90fe-b8340f663840",
+            "rtype": "light"
+          },
+          "action": {
+            "on": {
+              "on": true
+            },
+            "dimming": {
+              "brightness": 30.0
+            },
+            "color_temperature": {
+              "mirek": 370
+            }
+          }
+        },
+        {
+          "target": {
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
@@ -18937,7 +19122,7 @@
         },
         {
           "target": {
-            "rid": "2ee7a2f5-7427-4109-b96e-94cf1ebf4e76",
+            "rid": "8c995774-d012-46cf-9e0b-4c769f4f951f",
             "rtype": "light"
           },
           "action": {
