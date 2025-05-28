@@ -139,7 +139,7 @@ func ParseArea(s string) (Area, error) {
 	return InvalidArea, fmt.Errorf("unknown area: %q", s)
 }
 
-type Children struct {
+type Child struct {
 	Rid   string `json:"rid"`
 	Rtype string `json:"rtype"`
 }
@@ -154,7 +154,7 @@ type RoomMetadata struct {
 type RoomData struct {
 	ID       string         `json:"id"`
 	IDV1     string         `json:"id_v1"`
-	Children []Children     `json:"children"`
+	Children []Child        `json:"children"`
 	Services []RoomServices `json:"services"`
 	Metadata RoomMetadata   `json:"metadata"`
 	Type     string         `json:"type"`
@@ -162,12 +162,12 @@ type RoomData struct {
 
 type RoomUpdate struct {
 	ID       string        `json:"id"`
-	Children *[]Children   `json:"children"`
+	Children *[]Child      `json:"children"`
 	Metadata *RoomMetadata `json:"metadata"`
 }
 
 type RoomCreate struct {
-	Children []Children   `json:"children"`
+	Children []Child      `json:"children"`
 	Metadata RoomMetadata `json:"metadata"`
 }
 
