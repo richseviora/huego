@@ -41,6 +41,10 @@ type ColorGamut struct {
 }
 
 type Color struct {
+	XY XYCoord `json:"xy"`
+}
+
+type ColorInfo struct {
 	XY        XYCoord    `json:"xy"`
 	Gamut     ColorGamut `json:"gamut"`
 	GamutType string     `json:"gamut_type"`

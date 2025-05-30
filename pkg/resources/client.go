@@ -123,7 +123,6 @@ func Get[T any](ctx context.Context, path string, c *APIClient) (*T, error) {
 
 	defer resp.Body.Close()
 
-	fmt.Printf("Response status: %s\n", resp.Status)
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err)

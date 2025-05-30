@@ -57,7 +57,7 @@ type Image struct {
 }
 type SceneMetadata struct {
 	Name  string `json:"name"`
-	Image Image  `json:"image"`
+	Image *Image `json:"image,omitempty"`
 }
 type Group struct {
 	Rid   string `json:"rid"`
@@ -82,6 +82,23 @@ type SceneData struct {
 	Type        string         `json:"type"`
 }
 
+func (s SceneData) Identity() string {
+	return s.ID
+}
+
+var _ Identable = &SceneData{}
+
+type SceneCreate struct {
+	Metadata SceneMetadata  `json:"metadata"`
+	Actions  []ActionTarget `json:"actions"`
+	Group    Group          `json:"group"`
+}
+
+type SceneUpdate struct {
+	Metadata SceneMetadata  `json:"metadata"`
+	Actions  []ActionTarget `json:"actions"`
+}
+
 type SceneService struct {
 	client *APIClient
 }
@@ -97,15 +114,17 @@ func (s *SceneService) GetAllScenes(ctx context.Context) (*ResourceList[SceneDat
 }
 
 func (s *SceneService) GetScene(ctx context.Context, id string) (*SceneData, error) {
-	return Get[SceneData](ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
+	path := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
+	return GetSingularResource[SceneData](id, path, ctx, s.client, "scene")
 }
 
-func (s *SceneService) UpdateScene(ctx context.Context, id string, scene *SceneData) (*SceneData, error) {
-	return Put[SceneData](ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), scene, s.client)
+func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneCreate) (*Reference, error) {
+	url := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
+	return UpdateResource(url, ctx, scene, s.client, "scene")
 }
 
-func (s *SceneService) CreateScene(ctx context.Context, scene *SceneData) (*SceneData, error) {
-	return Post[SceneData](ctx, "/clip/v2/resource/scene", scene, s.client)
+func (s *SceneService) CreateScene(ctx context.Context, scene SceneCreate) (*Reference, error) {
+	return CreateResource("/clip/v2/resource/scene", ctx, scene, s.client, "scene")
 }
 
 func (s *SceneService) DeleteScene(ctx context.Context, id string) error {

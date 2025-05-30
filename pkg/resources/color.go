@@ -4,13 +4,44 @@ import "math"
 
 const (
 	sRGBGamma     = 2.4
-	sRGBThreshold = 0.0031308
+	sRGBThreshold = 0.04045
+
+	maxKelvin = 6500
+	minKelvin = 2000
+	maxMirek  = 500
+	minMirek  = 153
 )
 
 type RGBColor struct {
 	R int `json:"r"`
 	G int `json:"g"`
 	B int `json:"b"`
+}
+
+// KelvinToMirek converts color temperature from Kelvin to mirek value
+// Mirek = 1,000,000 / color temperature (Kelvin)
+func KelvinToMirek(kelvin float64) int {
+	// Clamp Kelvin value to valid range
+	kelvin = math.Max(minKelvin, math.Min(maxKelvin, kelvin))
+
+	// Convert to mirek
+	mirek := int(math.Round(1000000 / kelvin))
+
+	// Clamp mirek value to valid range
+	return int(math.Max(minMirek, math.Min(maxMirek, float64(mirek))))
+}
+
+// MirekToKelvin converts color temperature from mirek to Kelvin value
+// Kelvin = 1,000,000 / mirek
+func MirekToKelvin(mirek float64) float64 {
+	// Clamp mirek value to valid range
+	mirek = math.Max(minMirek, math.Min(maxMirek, mirek))
+
+	// Convert to Kelvin
+	kelvin := 1000000 / mirek
+
+	// Clamp Kelvin value to valid range
+	return math.Max(minKelvin, math.Min(maxKelvin, kelvin))
 }
 
 // RGBToXY converts RGB color values to XY coordinates and brightness
