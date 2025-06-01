@@ -118,7 +118,7 @@ func (s *SceneService) GetScene(ctx context.Context, id string) (*SceneData, err
 	return GetSingularResource[SceneData](id, path, ctx, s.client, "scene")
 }
 
-func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneCreate) (*Reference, error) {
+func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneUpdate) (*Reference, error) {
 	url := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
 	return UpdateResource(url, ctx, scene, s.client, "scene")
 }
