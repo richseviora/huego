@@ -20,15 +20,29 @@ type RGBColor struct {
 
 // KelvinToMirek converts color temperature from Kelvin to mirek value
 // Mirek = 1,000,000 / color temperature (Kelvin)
-func KelvinToMirek(kelvin float64) int {
+func KelvinToMirek(kelvin float64) float64 {
 	// Clamp Kelvin value to valid range
 	kelvin = math.Max(minKelvin, math.Min(maxKelvin, kelvin))
 
 	// Convert to mirek
-	mirek := int(math.Round(1000000 / kelvin))
+	mirek := 1000000 / kelvin
 
 	// Clamp mirek value to valid range
-	return int(math.Max(minMirek, math.Min(maxMirek, float64(mirek))))
+	return math.Max(minMirek, math.Min(maxMirek, mirek))
+}
+
+func roundToNearest(value float64, nearest int) float64 {
+	return math.Round(value/float64(nearest)) * float64(nearest)
+}
+
+func KelvinToMirekRounded(kelvin int32) int32 {
+	mirek := KelvinToMirek(float64(kelvin))
+	return int32(math.Round(mirek))
+}
+
+func MirekToKelvinRounded(mirek int32) int32 {
+	kelvin := MirekToKelvin(float64(mirek))
+	return int32(roundToNearest(kelvin, 100))
 }
 
 // MirekToKelvin converts color temperature from mirek to Kelvin value

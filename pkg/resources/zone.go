@@ -47,12 +47,12 @@ func (s *ZoneService) GetZone(ctx context.Context, id string) (*ZoneData, error)
 	return GetSingularResource[ZoneData](id, "/clip/v2/resource/zone/"+id, ctx, s.client, "zone")
 }
 
-func (s *ZoneService) CreateZone(ctx context.Context, zone *ZoneData) (*ResourceUpdateResponse, error) {
+func (s *ZoneService) CreateZone(ctx context.Context, zone *ZoneCreateOrUpdate) (*ResourceUpdateResponse, error) {
 	return Post[ResourceUpdateResponse](ctx, "/clip/v2/resource/zone", zone, s.client)
 }
 
-func (s *ZoneService) UpdateZone(ctx context.Context, zone *ZoneData) (*ResourceUpdateResponse, error) {
-	return Put[ResourceUpdateResponse](ctx, "/clip/v2/resource/zone/"+zone.ID, zone, s.client)
+func (s *ZoneService) UpdateZone(ctx context.Context, id string, zone *ZoneCreateOrUpdate) (*ResourceUpdateResponse, error) {
+	return Put[ResourceUpdateResponse](ctx, "/clip/v2/resource/zone/"+id, zone, s.client)
 }
 
 func (s *ZoneService) DeleteZone(ctx context.Context, id string) error {

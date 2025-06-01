@@ -247,7 +247,7 @@ func GetSingularResource[T Identable](id string, path string, ctx context.Contex
 		return nil, fmt.Errorf("resource ID %s of type %s not found", id, resourceName)
 	}
 	if (*resource).Identity() != id {
-		return nil, fmt.Errorf("resource not matched", id, resourceName)
+		return nil, fmt.Errorf("resource ID %s of type %s not matched", id, resourceName)
 	}
 	return resource, nil
 }
