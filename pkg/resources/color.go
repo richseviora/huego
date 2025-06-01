@@ -1,6 +1,9 @@
 package resources
 
-import "math"
+import (
+	"math"
+)
+import "github.com/nuqz/col2xy"
 
 const (
 	sRGBGamma     = 2.4
@@ -56,6 +59,14 @@ func MirekToKelvin(mirek float64) float64 {
 
 	// Clamp Kelvin value to valid range
 	return math.Max(minKelvin, math.Min(maxKelvin, kelvin))
+}
+
+func RGBtoXY2(c RGBColor) XYCoord {
+	resultX, resultY := col2xy.RGB2XY(byte(c.R), byte(c.B), byte(c.G))
+	return XYCoord{
+		X: resultX,
+		Y: resultY,
+	}
 }
 
 // RGBToXY converts RGB color values to XY coordinates and brightness
