@@ -34,10 +34,6 @@ func KelvinToMirek(kelvin float64) float64 {
 	return math.Max(minMirek, math.Min(maxMirek, mirek))
 }
 
-func roundToNearest(value float64, nearest int) float64 {
-	return math.Round(value/float64(nearest)) * float64(nearest)
-}
-
 func KelvinToMirekRounded(kelvin int32) int32 {
 	mirek := KelvinToMirek(float64(kelvin))
 	return int32(math.Round(mirek))
@@ -46,6 +42,10 @@ func KelvinToMirekRounded(kelvin int32) int32 {
 func MirekToKelvinRounded(mirek int32) int32 {
 	kelvin := MirekToKelvin(float64(mirek))
 	return int32(roundToNearest(kelvin, 100))
+}
+
+func roundToNearest(value float64, nearest int) float64 {
+	return math.Round(value/float64(nearest)) * float64(nearest)
 }
 
 // MirekToKelvin converts color temperature from mirek to Kelvin value

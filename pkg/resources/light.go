@@ -5,11 +5,6 @@ import (
 	"fmt"
 )
 
-type Reference struct {
-	RID   string `json:"rid"`
-	RType string `json:"rtype"`
-}
-
 type LightMetadata struct {
 	Name      string `json:"name"`
 	Archetype string `json:"archetype"`
@@ -23,15 +18,6 @@ type LightOn struct {
 type DimmingInfo struct {
 	Brightness  float64 `json:"brightness"`
 	MinDimLevel float64 `json:"min_dim_level"`
-}
-
-type Dimming struct {
-	Brightness float64 `json:"brightness"`
-}
-
-type XYCoord struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
 }
 
 type ColorGamut struct {
@@ -101,25 +87,9 @@ type Light struct {
 	Type      string               `json:"type"`
 }
 
-type ResourceError struct {
-	Description string `json:"description"`
-}
-
-type ResourceList[T any] struct {
-	Data   []T             `json:"data"`
-	Errors []ResourceError `json:"errors"`
-}
-
 // LightService handles light-related API operations
 type LightService struct {
 	client *APIClient
-}
-
-type ResourceUpdateResponse struct {
-	Errors []struct {
-		Description string `json:"description"`
-	} `json:"errors"`
-	Data []Reference `json:"data"`
 }
 
 // NewLightService creates a new LightService instance
