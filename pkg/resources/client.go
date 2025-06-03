@@ -1,14 +1,12 @@
 package resources
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/store"
-	"io"
 	"net/http"
 	"os"
 	"time"
@@ -38,6 +36,10 @@ type APIClient struct {
 	RoomService  *RoomService
 	ZoneService  *ZoneService
 }
+
+var (
+	_ common.RequestProcessor = &APIClient{}
+)
 
 // ClientOption defines functional options for configuring the APIClient
 type ClientOption func(*APIClient)
@@ -92,6 +94,10 @@ func (c *APIClient) Initialize(ctx context.Context) error {
 	return CreateApplicationKey(ctx, c)
 }
 
+func (c *APIClient) BaseURL() string {
+	return c.baseURL
+}
+
 // Do executes an HTTP request and returns the response
 func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 	if ctx == nil {
@@ -107,110 +113,6 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 
 	req = req.WithContext(ctx)
 	return c.httpClient.Do(req)
-}
-
-// Get performs a GET request and unmarshals the response into the provided type
-func Get[T any](ctx context.Context, path string, c *APIClient) (*T, error) {
-	req, err := http.NewRequest(http.MethodGet, c.baseURL+path, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := c.Do(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	var result T
-	if err := json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
-		fmt.Printf("Failed to decode response: %v\n", err)
-		fmt.Printf("Response body: %s\n", string(bodyBytes))
-		return nil, err
-	}
-
-	return &result, nil
-}
-
-// Delete performs a DELETE request for the specified resource
-func Delete(ctx context.Context, path string, c *APIClient) error {
-	req, err := http.NewRequest(http.MethodDelete, c.baseURL+path, nil)
-	if err != nil {
-		return err
-	}
-
-	resp, err := c.Do(ctx, req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= 400 {
-		return fmt.Errorf("delete request failed with status: %s", resp.Status)
-	}
-
-	return nil
-}
-
-// Post performs a POST request and unmarshals the response into the provided type
-func Post[T any](ctx context.Context, path string, body interface{}, c *APIClient) (*T, error) {
-	jsonBody, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+path, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.Do(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var result T
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	return &result, nil
-}
-
-func Put[T any](ctx context.Context, path string, body interface{}, c *APIClient) (*T, error) {
-	jsonBody, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, c.baseURL+path, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.Do(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var result T
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	return &result, nil
 }
 
 func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
@@ -276,5 +178,5 @@ func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName st
 		DeviceType:        appName + "#" + instanceName,
 		GenerateClientKey: true,
 	}
-	return Post[BridgeRegistrationResponseBody](ctx, "/api", request, c)
+	return common.Post[BridgeRegistrationResponseBody](ctx, "/api", request, c)
 }

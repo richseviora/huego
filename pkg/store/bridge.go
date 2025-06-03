@@ -15,6 +15,9 @@ type Bridge struct {
 	Port              int    `json:"port"`
 }
 
+const url = "https://discovery.meethue.com"
+const discoveryTimeout = time.Second * 5
+
 func DiscoverBridgesWithMDNS() ([]Bridge, error) {
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
@@ -22,7 +25,7 @@ func DiscoverBridgesWithMDNS() ([]Bridge, error) {
 	}
 
 	entries := make(chan *zeroconf.ServiceEntry)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), discoveryTimeout)
 	defer cancel()
 
 	go func() {
@@ -69,7 +72,8 @@ func DiscoverBridges() ([]Bridge, error) {
 	}
 
 	// Fallback to HTTP discovery if mDNS fails
-	resp, err := http.Get("https://discovery.meethue.com")
+
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}

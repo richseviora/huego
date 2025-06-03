@@ -3,6 +3,7 @@ package resources
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/pkg/resources/common"
 	"time"
 )
 
@@ -31,7 +32,7 @@ type ColorGradient struct {
 }
 type Action struct {
 	On               *On               `json:"on"`
-	Dimming          *Dimming          `json:"dimming"`
+	Dimming          *common.Dimming   `json:"dimming"`
 	ColorTemperature *ColorTemperature `json:"color_temperature,omitempty"`
 	Color            *Color            `json:"color,omitempty"`
 	Gradient         *ColorGradient    `json:"gradient,omitempty"`
@@ -44,7 +45,7 @@ type ActionTarget struct {
 
 type Palette struct {
 	Color            []Color            `json:"color"`
-	Dimming          []Dimming          `json:"dimming"`
+	Dimming          []common.Dimming   `json:"dimming"`
 	ColorTemperature []ColorTemperature `json:"color_temperature"`
 	Effects          []LightEffect      `json:"effects"`
 	EffectsV2        []LightEffectV2    `json:"effects_v2"`
@@ -86,7 +87,7 @@ func (s SceneData) Identity() string {
 	return s.ID
 }
 
-var _ Identable = &SceneData{}
+var _ common.Identable = &SceneData{}
 
 type SceneCreate struct {
 	Metadata SceneMetadata  `json:"metadata"`
@@ -109,24 +110,24 @@ func NewSceneService(client *APIClient) *SceneService {
 	}
 }
 
-func (s *SceneService) GetAllScenes(ctx context.Context) (*ResourceList[SceneData], error) {
-	return Get[ResourceList[SceneData]](ctx, "/clip/v2/resource/scene", s.client)
+func (s *SceneService) GetAllScenes(ctx context.Context) (*common.ResourceList[SceneData], error) {
+	return common.Get[common.ResourceList[SceneData]](ctx, "/clip/v2/resource/scene", s.client)
 }
 
 func (s *SceneService) GetScene(ctx context.Context, id string) (*SceneData, error) {
 	path := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
-	return GetSingularResource[SceneData](id, path, ctx, s.client, "scene")
+	return common.GetSingularResource[SceneData](id, path, ctx, s.client, "scene")
 }
 
-func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneUpdate) (*Reference, error) {
+func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneUpdate) (*common.Reference, error) {
 	url := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
-	return UpdateResource(url, ctx, scene, s.client, "scene")
+	return common.UpdateResource(url, ctx, scene, s.client, "scene")
 }
 
-func (s *SceneService) CreateScene(ctx context.Context, scene SceneCreate) (*Reference, error) {
-	return CreateResource("/clip/v2/resource/scene", ctx, scene, s.client, "scene")
+func (s *SceneService) CreateScene(ctx context.Context, scene SceneCreate) (*common.Reference, error) {
+	return common.CreateResource("/clip/v2/resource/scene", ctx, scene, s.client, "scene")
 }
 
 func (s *SceneService) DeleteScene(ctx context.Context, id string) error {
-	return Delete(ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
+	return common.Delete(ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
 }

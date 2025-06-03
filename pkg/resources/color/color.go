@@ -1,18 +1,19 @@
-package resources
+package color
 
 import (
 	"math"
+
+	"github.com/nuqz/col2xy"
+	"github.com/richseviora/huego/pkg/resources/common"
 )
-import "github.com/nuqz/col2xy"
 
 const (
 	sRGBGamma     = 2.4
 	sRGBThreshold = 0.04045
-
-	maxKelvin = 6500
-	minKelvin = 2000
-	maxMirek  = 500
-	minMirek  = 153
+	maxKelvin     = 6500
+	minKelvin     = 2000
+	maxMirek      = 500
+	minMirek      = 153
 )
 
 type RGBColor struct {
@@ -61,9 +62,9 @@ func MirekToKelvin(mirek float64) float64 {
 	return math.Max(minKelvin, math.Min(maxKelvin, kelvin))
 }
 
-func RGBtoXY2(c RGBColor) XYCoord {
+func RGBtoXY2(c RGBColor) common.XYCoord {
 	resultX, resultY := col2xy.RGB2XY(byte(c.R), byte(c.B), byte(c.G))
-	return XYCoord{
+	return common.XYCoord{
 		X: resultX,
 		Y: resultY,
 	}
@@ -71,7 +72,7 @@ func RGBtoXY2(c RGBColor) XYCoord {
 
 // RGBToXY converts RGB color values to XY coordinates and brightness
 // Takes RGB values in range [0, 255] and returns XY coordinates and brightness [0, 100]
-func RGBToXY(color RGBColor) (XYCoord, float64) {
+func RGBToXY(color RGBColor) (common.XYCoord, float64) {
 	// Convert RGB to [0,1] range
 	r := float64(color.R) / 255.0
 	g := float64(color.G) / 255.0
@@ -110,12 +111,12 @@ func RGBToXY(color RGBColor) (XYCoord, float64) {
 	// Calculate brightness (0-100)
 	brightness := Y * 100
 
-	return XYCoord{X: x, Y: y}, brightness
+	return common.XYCoord{X: x, Y: y}, brightness
 }
 
 // XYToRGB converts XY color coordinates to RGB values
 // Returns red, green, blue values in the range [0, 255]
-func XYToRGB(color XYCoord, brightness float64) RGBColor {
+func XYToRGB(color common.XYCoord, brightness float64) RGBColor {
 	// Convert brightness from [0,100] to [0,1]
 	brightness = math.Max(0, math.Min(brightness/100.0, 1.0))
 

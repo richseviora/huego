@@ -3,6 +3,7 @@ package resources
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/pkg/resources/common"
 )
 
 type LightMetadata struct {
@@ -21,19 +22,19 @@ type DimmingInfo struct {
 }
 
 type ColorGamut struct {
-	Red   XYCoord `json:"red"`
-	Blue  XYCoord `json:"blue"`
-	Green XYCoord `json:"green"`
+	Red   common.XYCoord `json:"red"`
+	Blue  common.XYCoord `json:"blue"`
+	Green common.XYCoord `json:"green"`
 }
 
 type Color struct {
-	XY XYCoord `json:"xy"`
+	XY common.XYCoord `json:"xy"`
 }
 
 type ColorInfo struct {
-	XY        XYCoord    `json:"xy"`
-	Gamut     ColorGamut `json:"gamut"`
-	GamutType string     `json:"gamut_type"`
+	XY        common.XYCoord `json:"xy"`
+	Gamut     ColorGamut     `json:"gamut"`
+	GamutType string         `json:"gamut_type"`
 }
 
 type ColorTemperature struct {
@@ -65,8 +66,8 @@ type PowerUp struct {
 		On   LightOn `json:"on"`
 	} `json:"on"`
 	Dimming struct {
-		Mode    string  `json:"mode"`
-		Dimming Dimming `json:"dimming"`
+		Mode    string         `json:"mode"`
+		Dimming common.Dimming `json:"dimming"`
 	}
 	Color struct {
 		Mode      string               `json:"mode"`
@@ -79,7 +80,7 @@ type Light struct {
 	ID        string               `json:"id"`
 	IDv1      string               `json:"idv1"`
 	Metadata  LightMetadata        `json:"metadata"`
-	Owner     Reference            `json:"owner"`
+	Owner     common.Reference     `json:"owner"`
 	On        LightOn              `json:"on"`
 	Dimming   DimmingInfo          `json:"dimming"`
 	ColorTemp ColorTemperatureInfo `json:"color_temperature"`
@@ -87,10 +88,20 @@ type Light struct {
 	Type      string               `json:"type"`
 }
 
+type LightManager interface {
+	GetLight(ctx context.Context, id string) (*Light, error)
+	GetAllLights(ctx context.Context) (*common.ResourceList[Light], error)
+	UpdateLight(ctx context.Context, update LightUpdate) error
+}
+
 // LightService handles light-related API operations
 type LightService struct {
 	client *APIClient
 }
+
+var (
+	_ LightManager = &LightService{}
+)
 
 // NewLightService creates a new LightService instance
 func NewLightService(client *APIClient) *LightService {
@@ -101,11 +112,14 @@ func NewLightService(client *APIClient) *LightService {
 
 // GetLight retrieves a single light by its ID
 func (s *LightService) GetLight(ctx context.Context, id string) (*Light, error) {
-	result, err := Get[ResourceList[Light]](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
+	result, err := common.Get[common.ResourceList[Light]](ctx, fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client)
+	if err != nil {
+		return nil, err
+	}
 	if result == nil || len(result.Data) == 0 {
 		return nil, fmt.Errorf("light not found")
 	}
-	room, err := FirstOrError(result)
+	room, err := common.FirstOrError(result)
 	if err != nil {
 		return nil, fmt.Errorf("light not found")
 	}
@@ -116,12 +130,12 @@ func (s *LightService) GetLight(ctx context.Context, id string) (*Light, error) 
 }
 
 // GetAllLights retrieves all available lights
-func (s *LightService) GetAllLights(ctx context.Context) (*ResourceList[Light], error) {
-	return Get[ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
+func (s *LightService) GetAllLights(ctx context.Context) (*common.ResourceList[Light], error) {
+	return common.Get[common.ResourceList[Light]](ctx, "/clip/v2/resource/light", s.client)
 }
 
 func (s *LightService) UpdateLight(ctx context.Context, update LightUpdate) error {
-	result, err := Put[ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
+	result, err := common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
 		return err
 	}
