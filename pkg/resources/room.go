@@ -18,11 +18,9 @@ type RoomData struct {
 	Type     string       `json:"type"`
 }
 
-var _ Identable = &RoomData{}
-
-type Identable interface {
-	Identity() string
-}
+var (
+	_ Identable = &RoomData{}
+)
 
 func (d RoomData) Identity() string {
 	return d.ID
@@ -30,12 +28,12 @@ func (d RoomData) Identity() string {
 
 type RoomUpdate struct {
 	ID       string        `json:"id"`
-	Children *[]Child      `json:"children"`
+	Children *[]Reference  `json:"children"`
 	Metadata *RoomMetadata `json:"metadata"`
 }
 
 type RoomCreate struct {
-	Children []Child      `json:"children"`
+	Children []Reference  `json:"children"`
 	Metadata RoomMetadata `json:"metadata"`
 }
 
@@ -43,30 +41,37 @@ type RoomService struct {
 	client *APIClient
 }
 
+const roomBasePath = "/clip/v2/resource/room"
+
+func (s *RoomService) CollectionPath() string {
+	return roomBasePath
+}
+
+func (s *RoomService) ResourcePath(id string) string {
+	return roomBasePath + "/" + id
+}
+
+var (
+	_ ResourcePathable = &RoomService{}
+)
+
 func NewRoomService(client *APIClient) *RoomService {
 	return &RoomService{
 		client: client,
 	}
 }
 
-func FirstOrError[T any](list *ResourceList[T]) (*T, error) {
-	if list == nil || len(list.Data) == 0 {
-		return nil, fmt.Errorf("resource not found")
-	}
-	return &list.Data[0], nil
-}
-
 func (s *RoomService) GetAllRooms(ctx context.Context) (*ResourceList[RoomData], error) {
-	return Get[ResourceList[RoomData]](ctx, "/clip/v2/resource/room", s.client)
+	return Get[ResourceList[RoomData]](ctx, s.CollectionPath(), s.client)
 }
 
 func (s *RoomService) GetRoom(ctx context.Context, id string) (*RoomData, error) {
-	path := fmt.Sprintf("/clip/v2/resource/room/%s", id)
+	path := s.ResourcePath(id)
 	return GetSingularResource[RoomData](id, path, ctx, s.client, "room")
 }
 
 func (s *RoomService) UpdateRoom(ctx context.Context, update RoomUpdate) error {
-	result, err := Put[ResourceUpdateResponse](ctx, "/clip/v2/resource/room/"+update.ID, update, s.client)
+	result, err := Put[ResourceUpdateResponse](ctx, s.ResourcePath(update.ID), update, s.client)
 	if err != nil {
 		return err
 	}
@@ -77,54 +82,10 @@ func (s *RoomService) UpdateRoom(ctx context.Context, update RoomUpdate) error {
 }
 
 func (s *RoomService) DeleteRoom(ctx context.Context, id string) error {
-	err := Delete(ctx, "/clip/v2/resource/room/"+id, s.client)
+	err := Delete(ctx, s.ResourcePath(id), s.client)
 	return err
 }
 
 func (s *RoomService) CreateRoom(ctx context.Context, create RoomCreate) (*Reference, error) {
-	path := "/clip/v2/resource/room"
-	return CreateResource(path, ctx, create, s.client, "room")
-}
-
-func CreateResource[T any](path string, ctx context.Context, create T, client *APIClient, resourceName string) (*Reference, error) {
-	result, err := Post[ResourceUpdateResponse](ctx, path, create, client)
-	if err != nil {
-		return nil, err
-	}
-	if len(result.Errors) > 0 {
-		return nil, fmt.Errorf("failed to create resource %s: %v", resourceName, result.Errors)
-	}
-	return &result.Data[0], nil
-}
-
-func GetSingularResource[T Identable](id string, path string, ctx context.Context, client *APIClient, resourceName string) (*T, error) {
-	result, err := Get[ResourceList[T]](ctx, path, client)
-	if err != nil {
-		return nil, err
-	}
-	if result == nil || len(result.Data) == 0 {
-		if result.Errors != nil && len(result.Errors) > 0 {
-			return nil, fmt.Errorf(result.Errors[0].Description)
-		}
-		return nil, fmt.Errorf("resource ID %s of type %s not found", id, resourceName)
-	}
-	resource, err := FirstOrError[T](result)
-	if err != nil {
-		return nil, fmt.Errorf("resource ID %s of type %s not found", id, resourceName)
-	}
-	if (*resource).Identity() != id {
-		return nil, fmt.Errorf("resource ID %s of type %s not matched", id, resourceName)
-	}
-	return resource, nil
-}
-
-func UpdateResource[T any](path string, ctx context.Context, create T, client *APIClient, resourceName string) (*Reference, error) {
-	result, err := Put[ResourceUpdateResponse](ctx, path, create, client)
-	if err != nil {
-		return nil, err
-	}
-	if len(result.Errors) > 0 {
-		return nil, fmt.Errorf("failed to update resource %s: %v", resourceName, result.Errors)
-	}
-	return &result.Data[0], nil
+	return CreateResource(s.CollectionPath(), ctx, create, s.client, "room")
 }
