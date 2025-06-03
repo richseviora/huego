@@ -218,6 +218,11 @@ func (s *RoomService) UpdateRoom(ctx context.Context, update RoomUpdate) error {
 	return nil
 }
 
+func (s *RoomService) DeleteRoom(ctx context.Context, id string) error {
+	err := Delete(ctx, "/clip/v2/resource/room/"+id, s.client)
+	return err
+}
+
 func (s *RoomService) CreateRoom(ctx context.Context, create RoomCreate) (*Reference, error) {
 	path := "/clip/v2/resource/room"
 	return CreateResource(path, ctx, create, s.client, "room")
@@ -240,6 +245,9 @@ func GetSingularResource[T Identable](id string, path string, ctx context.Contex
 		return nil, err
 	}
 	if result == nil || len(result.Data) == 0 {
+		if result.Errors != nil && len(result.Errors) > 0 {
+			return nil, fmt.Errorf(result.Errors[0].Description)
+		}
 		return nil, fmt.Errorf("resource ID %s of type %s not found", id, resourceName)
 	}
 	resource, err := FirstOrError[T](result)

@@ -101,9 +101,13 @@ type Light struct {
 	Type      string               `json:"type"`
 }
 
+type ResourceError struct {
+	Description string `json:"description"`
+}
+
 type ResourceList[T any] struct {
-	Data   []T      `json:"data"`
-	Errors []string `json:"errors"`
+	Data   []T             `json:"data"`
+	Errors []ResourceError `json:"errors"`
 }
 
 // LightService handles light-related API operations
