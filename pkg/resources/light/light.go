@@ -87,7 +87,7 @@ type Light struct {
 	Type      string               `json:"type"`
 }
 
-type LightManager interface {
+type LightService interface {
 	GetLight(ctx context.Context, id string) (*Light, error)
 	GetAllLights(ctx context.Context) (*common.ResourceList[Light], error)
 	UpdateLight(ctx context.Context, update LightUpdate) error

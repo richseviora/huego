@@ -7,24 +7,24 @@ import (
 	"github.com/richseviora/huego/pkg/resources/light"
 )
 
-// LightService handles light-related API operations
-type LightService struct {
+// LightManager handles light-related API operations
+type LightManager struct {
 	client common.RequestProcessor
 }
 
 var (
-	_ light.LightManager = &LightService{}
+	_ light.LightService = &LightManager{}
 )
 
-// NewLightService creates a new LightService instance
-func NewLightService(client common.RequestProcessor) *LightService {
-	return &LightService{
+// NewLightService creates a new LightManager instance
+func NewLightService(client common.RequestProcessor) *LightManager {
+	return &LightManager{
 		client: client,
 	}
 }
 
 // GetLight retrieves a single light by its ID
-func (s *LightService) GetLight(ctx context.Context, id string) (*light.Light, error) {
+func (s *LightManager) GetLight(ctx context.Context, id string) (*light.Light, error) {
 	result, err := common.Get[common.ResourceList[light.Light]](
 		ctx,
 		fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client,
@@ -46,11 +46,11 @@ func (s *LightService) GetLight(ctx context.Context, id string) (*light.Light, e
 }
 
 // GetAllLights retrieves all available lights
-func (s *LightService) GetAllLights(ctx context.Context) (*common.ResourceList[light.Light], error) {
+func (s *LightManager) GetAllLights(ctx context.Context) (*common.ResourceList[light.Light], error) {
 	return common.Get[common.ResourceList[light.Light]](ctx, "/clip/v2/resource/light", s.client)
 }
 
-func (s *LightService) UpdateLight(ctx context.Context, update light.LightUpdate) error {
+func (s *LightManager) UpdateLight(ctx context.Context, update light.LightUpdate) error {
 	result, err := common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
 		return err

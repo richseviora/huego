@@ -9,7 +9,12 @@ import (
 	"github.com/richseviora/huego/internal/services/room"
 	"github.com/richseviora/huego/internal/services/scene"
 	"github.com/richseviora/huego/internal/services/zone"
+	"github.com/richseviora/huego/pkg/resources/client"
 	"github.com/richseviora/huego/pkg/resources/common"
+	light2 "github.com/richseviora/huego/pkg/resources/light"
+	room2 "github.com/richseviora/huego/pkg/resources/room"
+	scene2 "github.com/richseviora/huego/pkg/resources/scene"
+	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 
 	//"github.com/richseviora/huego/pkg/resources/room"
 	"github.com/richseviora/huego/pkg/store"
@@ -37,14 +42,31 @@ type APIClient struct {
 	timeout      time.Duration
 	keyStore     store.KeyStore
 	initMode     InitMode
-	LightService *light.LightService
-	SceneService *scene.SceneManager
-	RoomService  *room.RoomService
-	ZoneService  *zone.ZoneManager
+	lightService light2.LightService
+	sceneService scene2.SceneService
+	roomService  room2.RoomService
+	zoneService  zone2.ZoneService
+}
+
+func (c *APIClient) ZoneService() zone2.ZoneService {
+	return c.zoneService
+}
+
+func (c *APIClient) RoomService() room2.RoomService {
+	return c.roomService
+}
+
+func (c *APIClient) SceneService() scene2.SceneService {
+	return c.sceneService
+}
+
+func (c *APIClient) LightService() light2.LightService {
+	return c.lightService
 }
 
 var (
 	_ common.RequestProcessor = &APIClient{}
+	_ client.HueServiceClient = &APIClient{}
 )
 
 // ClientOption defines functional options for configuring the APIClient
@@ -65,7 +87,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	client := &APIClient{
+	c := &APIClient{
 		baseURL: "https://" + ipAddress,
 		httpClient: &http.Client{
 			Transport: tr,
@@ -75,16 +97,16 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		keyStore: keyStore,
 		initMode: initMode,
 	}
-	client.SceneService = scene.NewSceneService(client)
-	client.LightService = light.NewLightService(client)
-	client.RoomService = room.NewRoomService(client)
-	client.ZoneService = zone.NewZoneService(client)
+	c.sceneService = scene.NewSceneService(c)
+	c.lightService = light.NewLightService(c)
+	c.roomService = room.NewRoomService(c)
+	c.zoneService = zone.NewZoneService(c)
 
 	for _, opt := range opts {
-		opt(client)
+		opt(c)
 	}
 
-	return client
+	return c
 }
 
 func (c *APIClient) Initialize(ctx context.Context) error {
