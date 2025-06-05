@@ -10,7 +10,7 @@ import (
 )
 
 func TestConnection(ipAddress string) error {
-	client := resources.NewAPIClient(ipAddress)
+	client := resources.NewAPIClient(ipAddress, resources.EnvThenLocal)
 	err := client.Initialize(context.Background())
 	if err != nil {
 		fmt.Printf("Initialization Failed: %v\n", err)

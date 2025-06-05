@@ -7,7 +7,10 @@ import (
 	"fmt"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/services/room"
+	"github.com/richseviora/huego/internal/services/scene"
+	"github.com/richseviora/huego/internal/services/zone"
 	"github.com/richseviora/huego/pkg/resources/common"
+
 	//"github.com/richseviora/huego/pkg/resources/room"
 	"github.com/richseviora/huego/pkg/store"
 	"net/http"
@@ -35,9 +38,9 @@ type APIClient struct {
 	keyStore     store.KeyStore
 	initMode     InitMode
 	LightService *light.LightService
-	SceneService *SceneService
+	SceneService *scene.SceneManager
 	RoomService  *room.RoomService
-	ZoneService  *ZoneService
+	ZoneService  *zone.ZoneManager
 }
 
 var (
@@ -72,10 +75,10 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		keyStore: keyStore,
 		initMode: initMode,
 	}
-	client.SceneService = NewSceneService(client)
+	client.SceneService = scene.NewSceneService(client)
 	client.LightService = light.NewLightService(client)
 	client.RoomService = room.NewRoomService(client)
-	client.ZoneService = NewZoneService(client)
+	client.ZoneService = zone.NewZoneService(client)
 
 	for _, opt := range opts {
 		opt(client)

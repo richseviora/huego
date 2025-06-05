@@ -1,8 +1,7 @@
-package resources
+package scene
 
 import (
 	"context"
-	"fmt"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/light"
 	"time"
@@ -101,34 +100,10 @@ type SceneUpdate struct {
 	Actions  []ActionTarget `json:"actions"`
 }
 
-type SceneService struct {
-	client *APIClient
-}
-
-func NewSceneService(client *APIClient) *SceneService {
-	return &SceneService{
-		client: client,
-	}
-}
-
-func (s *SceneService) GetAllScenes(ctx context.Context) (*common.ResourceList[SceneData], error) {
-	return common.Get[common.ResourceList[SceneData]](ctx, "/clip/v2/resource/scene", s.client)
-}
-
-func (s *SceneService) GetScene(ctx context.Context, id string) (*SceneData, error) {
-	path := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
-	return common.GetSingularResource[SceneData](id, path, ctx, s.client, "scene")
-}
-
-func (s *SceneService) UpdateScene(ctx context.Context, id string, scene SceneUpdate) (*common.Reference, error) {
-	url := fmt.Sprintf("/clip/v2/resource/scene/%s", id)
-	return common.UpdateResource(url, ctx, scene, s.client, "scene")
-}
-
-func (s *SceneService) CreateScene(ctx context.Context, scene SceneCreate) (*common.Reference, error) {
-	return common.CreateResource("/clip/v2/resource/scene", ctx, scene, s.client, "scene")
-}
-
-func (s *SceneService) DeleteScene(ctx context.Context, id string) error {
-	return common.Delete(ctx, fmt.Sprintf("/clip/v2/resource/scene/%s", id), s.client)
+type SceneService interface {
+	GetAllScenes(ctx context.Context) (*common.ResourceList[SceneData], error)
+	GetScene(ctx context.Context, id string) (*SceneData, error)
+	UpdateScene(ctx context.Context, id string, scene SceneUpdate) (*common.Reference, error)
+	CreateScene(ctx context.Context, scene SceneCreate) (*common.Reference, error)
+	DeleteScene(ctx context.Context, id string) error
 }
