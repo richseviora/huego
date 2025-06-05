@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/store"
 	"net/http"
@@ -70,7 +71,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		initMode: initMode,
 	}
 	client.SceneService = NewSceneService(client)
-	client.LightService = NewLightService(client)
+	client.LightService = light.NewLightService(client)
 	client.RoomService = NewRoomService(client)
 	client.ZoneService = NewZoneService(client)
 

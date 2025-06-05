@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/richseviora/huego/pkg/resources/common"
+	"github.com/richseviora/huego/pkg/resources/light"
 	"time"
 )
 
@@ -31,12 +32,12 @@ type ColorGradient struct {
 	Points []any
 }
 type Action struct {
-	On               *On               `json:"on"`
-	Dimming          *common.Dimming   `json:"dimming"`
-	ColorTemperature *ColorTemperature `json:"color_temperature,omitempty"`
-	Color            *Color            `json:"color,omitempty"`
-	Gradient         *ColorGradient    `json:"gradient,omitempty"`
-	EffectsV2        *LightEffectV2    `json:"effects_v2,omitempty"`
+	On               *On                     `json:"on"`
+	Dimming          *common.Dimming         `json:"dimming"`
+	ColorTemperature *light.ColorTemperature `json:"color_temperature,omitempty"`
+	Color            *light.Color            `json:"color,omitempty"`
+	Gradient         *ColorGradient          `json:"gradient,omitempty"`
+	EffectsV2        *LightEffectV2          `json:"effects_v2,omitempty"`
 }
 type ActionTarget struct {
 	Target Target `json:"target"`
@@ -44,11 +45,11 @@ type ActionTarget struct {
 }
 
 type Palette struct {
-	Color            []Color            `json:"color"`
-	Dimming          []common.Dimming   `json:"dimming"`
-	ColorTemperature []ColorTemperature `json:"color_temperature"`
-	Effects          []LightEffect      `json:"effects"`
-	EffectsV2        []LightEffectV2    `json:"effects_v2"`
+	Color            []light.Color            `json:"color"`
+	Dimming          []common.Dimming         `json:"dimming"`
+	ColorTemperature []light.ColorTemperature `json:"color_temperature"`
+	Effects          []LightEffect            `json:"effects"`
+	EffectsV2        []LightEffectV2          `json:"effects_v2"`
 }
 type Recall struct {
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/pkg/resources"
 	"github.com/richseviora/huego/pkg/store"
 	"time"
@@ -15,7 +16,7 @@ func TestConnection(ipAddress string) error {
 		fmt.Printf("Initialization Failed: %v\n", err)
 		return err
 	}
-	lightService := resources.NewLightService(client)
+	lightService := light.NewLightService(client)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
