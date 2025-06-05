@@ -9,7 +9,7 @@ import (
 
 // LightService handles light-related API operations
 type LightService struct {
-	client *common.RequestProcessor
+	client common.RequestProcessor
 }
 
 var (
@@ -17,7 +17,7 @@ var (
 )
 
 // NewLightService creates a new LightService instance
-func NewLightService(client *common.RequestProcessor) *LightService {
+func NewLightService(client common.RequestProcessor) *LightService {
 	return &LightService{
 		client: client,
 	}
@@ -27,7 +27,7 @@ func NewLightService(client *common.RequestProcessor) *LightService {
 func (s *LightService) GetLight(ctx context.Context, id string) (*light.Light, error) {
 	result, err := common.Get[common.ResourceList[light.Light]](
 		ctx,
-		fmt.Sprintf("/clip/v2/resource/light/%s", id), *s.client,
+		fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client,
 	)
 	if err != nil {
 		return nil, err
@@ -47,11 +47,11 @@ func (s *LightService) GetLight(ctx context.Context, id string) (*light.Light, e
 
 // GetAllLights retrieves all available lights
 func (s *LightService) GetAllLights(ctx context.Context) (*common.ResourceList[light.Light], error) {
-	return common.Get[common.ResourceList[light.Light]](ctx, "/clip/v2/resource/light", *s.client)
+	return common.Get[common.ResourceList[light.Light]](ctx, "/clip/v2/resource/light", s.client)
 }
 
 func (s *LightService) UpdateLight(ctx context.Context, update light.LightUpdate) error {
-	result, err := common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, *s.client)
+	result, err := common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
 		return err
 	}
