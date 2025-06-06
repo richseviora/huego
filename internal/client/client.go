@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/richseviora/huego/internal/client/handlers"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/services/room"
 	"github.com/richseviora/huego/internal/services/scene"
@@ -201,5 +202,5 @@ func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName st
 		DeviceType:        appName + "#" + instanceName,
 		GenerateClientKey: true,
 	}
-	return Post[resources.BridgeRegistrationResponseBody](ctx, "/api", request, c)
+	return handlers.Post[resources.BridgeRegistrationResponseBody](ctx, "/api", request, c)
 }

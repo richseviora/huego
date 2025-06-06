@@ -1,4 +1,4 @@
-package client
+package handlers
 
 import (
 	"bytes"
@@ -12,10 +12,10 @@ import (
 
 func GetSingularResource[T common.Identable](id string, path string, ctx context.Context, client common.RequestProcessor, resourceName string) (*T, error) {
 	result, err := Get[common.ResourceList[T]](ctx, path, client)
-	if err != nil {
+	if err != nil || result == nil {
 		return nil, err
 	}
-	if result == nil || len(result.Data) == 0 {
+	if len(result.Data) == 0 {
 		if result.Errors != nil && len(result.Errors) > 0 {
 			return nil, fmt.Errorf(result.Errors[0].Description)
 		}

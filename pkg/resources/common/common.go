@@ -38,8 +38,3 @@ type RequestProcessor interface {
 type Identable interface {
 	Identity() string
 }
-
-type ResourcePathable interface {
-	CollectionPath() string
-	ResourcePath(id string) string
-}
