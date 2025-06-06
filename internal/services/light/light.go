@@ -3,6 +3,7 @@ package light
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/light"
 )
@@ -25,7 +26,7 @@ func NewLightService(client common.RequestProcessor) *LightManager {
 
 // GetLight retrieves a single light by its ID
 func (s *LightManager) GetLight(ctx context.Context, id string) (*light.Light, error) {
-	result, err := common.Get[common.ResourceList[light.Light]](
+	result, err := client.Get[common.ResourceList[light.Light]](
 		ctx,
 		fmt.Sprintf("/clip/v2/resource/light/%s", id), s.client,
 	)
@@ -35,7 +36,7 @@ func (s *LightManager) GetLight(ctx context.Context, id string) (*light.Light, e
 	if result == nil || len(result.Data) == 0 {
 		return nil, fmt.Errorf("light not found")
 	}
-	room, err := common.FirstOrError(result)
+	room, err := client.FirstOrError(result)
 	if err != nil {
 		return nil, fmt.Errorf("light not found")
 	}
@@ -47,11 +48,11 @@ func (s *LightManager) GetLight(ctx context.Context, id string) (*light.Light, e
 
 // GetAllLights retrieves all available lights
 func (s *LightManager) GetAllLights(ctx context.Context) (*common.ResourceList[light.Light], error) {
-	return common.Get[common.ResourceList[light.Light]](ctx, "/clip/v2/resource/light", s.client)
+	return client.Get[common.ResourceList[light.Light]](ctx, "/clip/v2/resource/light", s.client)
 }
 
 func (s *LightManager) UpdateLight(ctx context.Context, update light.LightUpdate) error {
-	result, err := common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
+	result, err := client.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/light/"+update.ID, update, s.client)
 	if err != nil {
 		return err
 	}

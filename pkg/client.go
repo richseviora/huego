@@ -3,11 +3,11 @@ package pkg
 import (
 	"context"
 	"errors"
-	"github.com/richseviora/huego/pkg/resources"
-	"github.com/richseviora/huego/pkg/store"
+	"github.com/richseviora/huego/internal/client"
+	"github.com/richseviora/huego/internal/store"
 )
 
-func NewClientFromMDNS() (*resources.APIClient, error) {
+func NewClientFromMDNS() (*client.APIClient, error) {
 	bridges, err := store.DiscoverBridgesWithMDNS()
 	if err != nil {
 		return nil, err
@@ -15,7 +15,7 @@ func NewClientFromMDNS() (*resources.APIClient, error) {
 	if len(bridges) == 0 {
 		return nil, errors.New("no bridges found")
 	}
-	client := resources.NewAPIClient(bridges[0].InternalIPAddress, resources.EnvOnly)
+	client := client.NewAPIClient(bridges[0].InternalIPAddress, client.EnvOnly)
 	err = client.Initialize(context.Background())
 	if err != nil {
 		return nil, err

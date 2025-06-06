@@ -1,4 +1,4 @@
-package resources
+package client
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 	"github.com/richseviora/huego/internal/services/room"
 	"github.com/richseviora/huego/internal/services/scene"
 	"github.com/richseviora/huego/internal/services/zone"
+	"github.com/richseviora/huego/internal/store"
+	"github.com/richseviora/huego/pkg/resources"
 	"github.com/richseviora/huego/pkg/resources/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	light2 "github.com/richseviora/huego/pkg/resources/light"
@@ -16,8 +18,6 @@ import (
 	scene2 "github.com/richseviora/huego/pkg/resources/scene"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 
-	//"github.com/richseviora/huego/pkg/resources/room"
-	"github.com/richseviora/huego/pkg/store"
 	"net/http"
 	"os"
 	"time"
@@ -176,11 +176,6 @@ func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
 	return c.keyStore.Set("application-key", key)
 }
 
-type CreateUserRequest struct {
-	devicetype        string `json:"devicetype"`
-	generateClientKey bool   `json:"generateclientkey"`
-}
-
 func CreateApplicationKey(ctx context.Context, c *APIClient) error {
 	res, err := c.RegisterDevice(ctx, "huego", "1234567890")
 	if err != nil {
@@ -201,10 +196,10 @@ func CreateApplicationKey(ctx context.Context, c *APIClient) error {
 }
 
 // RegisterDevice sends a registration request to the Hue bridge
-func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName string) (*BridgeRegistrationResponseBody, error) {
-	request := BridgeRegistrationRequest{
+func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName string) (*resources.BridgeRegistrationResponseBody, error) {
+	request := resources.BridgeRegistrationRequest{
 		DeviceType:        appName + "#" + instanceName,
 		GenerateClientKey: true,
 	}
-	return common.Post[BridgeRegistrationResponseBody](ctx, "/api", request, c)
+	return Post[resources.BridgeRegistrationResponseBody](ctx, "/api", request, c)
 }

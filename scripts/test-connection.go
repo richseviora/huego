@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/internal/services/light"
-	"github.com/richseviora/huego/pkg/resources"
-	"github.com/richseviora/huego/pkg/store"
+	"github.com/richseviora/huego/internal/store"
 	"time"
 )
 
 func TestConnection(ipAddress string) error {
-	client := resources.NewAPIClient(ipAddress, resources.EnvThenLocal)
+	client := client.NewAPIClient(ipAddress, client.EnvThenLocal)
 	err := client.Initialize(context.Background())
 	if err != nil {
 		fmt.Printf("Initialization Failed: %v\n", err)

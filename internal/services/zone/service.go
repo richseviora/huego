@@ -2,6 +2,7 @@ package zone
 
 import (
 	"context"
+	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 )
@@ -17,21 +18,21 @@ func NewZoneService(client common.RequestProcessor) *ZoneManager {
 }
 
 func (s *ZoneManager) GetAllZones(ctx context.Context) (*zone2.ZoneResponse, error) {
-	return common.Get[zone2.ZoneResponse](ctx, "/clip/v2/resource/zone", s.client)
+	return client.Get[zone2.ZoneResponse](ctx, "/clip/v2/resource/zone", s.client)
 }
 
 func (s *ZoneManager) GetZone(ctx context.Context, id string) (*zone2.ZoneData, error) {
-	return common.GetSingularResource[zone2.ZoneData](id, "/clip/v2/resource/zone/"+id, ctx, s.client, "zone")
+	return client.GetSingularResource[zone2.ZoneData](id, "/clip/v2/resource/zone/"+id, ctx, s.client, "zone")
 }
 
 func (s *ZoneManager) CreateZone(ctx context.Context, zone *zone2.ZoneCreateOrUpdate) (*common.ResourceUpdateResponse, error) {
-	return common.Post[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/zone", zone, s.client)
+	return client.Post[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/zone", zone, s.client)
 }
 
 func (s *ZoneManager) UpdateZone(ctx context.Context, id string, zone *zone2.ZoneCreateOrUpdate) (*common.ResourceUpdateResponse, error) {
-	return common.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/zone/"+id, zone, s.client)
+	return client.Put[common.ResourceUpdateResponse](ctx, "/clip/v2/resource/zone/"+id, zone, s.client)
 }
 
 func (s *ZoneManager) DeleteZone(ctx context.Context, id string) error {
-	return common.Delete(ctx, "/clip/v2/resource/zone/"+id, s.client)
+	return client.Delete(ctx, "/clip/v2/resource/zone/"+id, s.client)
 }

@@ -2,6 +2,7 @@ package light
 
 import (
 	"context"
+	"github.com/richseviora/huego/pkg/resources/color"
 	"github.com/richseviora/huego/pkg/resources/common"
 )
 
@@ -21,19 +22,19 @@ type DimmingInfo struct {
 }
 
 type ColorGamut struct {
-	Red   common.XYCoord `json:"red"`
-	Blue  common.XYCoord `json:"blue"`
-	Green common.XYCoord `json:"green"`
+	Red   color.XYCoord `json:"red"`
+	Blue  color.XYCoord `json:"blue"`
+	Green color.XYCoord `json:"green"`
 }
 
 type Color struct {
-	XY common.XYCoord `json:"xy"`
+	XY color.XYCoord `json:"xy"`
 }
 
 type ColorInfo struct {
-	XY        common.XYCoord `json:"xy"`
-	Gamut     ColorGamut     `json:"gamut"`
-	GamutType string         `json:"gamut_type"`
+	XY        color.XYCoord `json:"xy"`
+	Gamut     ColorGamut    `json:"gamut"`
+	GamutType string        `json:"gamut_type"`
 }
 
 type ColorTemperature struct {

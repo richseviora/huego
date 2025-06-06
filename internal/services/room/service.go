@@ -3,13 +3,10 @@ package room
 import (
 	"context"
 	"fmt"
+	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	room2 "github.com/richseviora/huego/pkg/resources/room"
 )
-
-type RoomService struct {
-	client common.RequestProcessor
-}
 
 const roomBasePath = "/clip/v2/resource/room"
 
@@ -26,6 +23,10 @@ var (
 	_ room2.RoomService       = &RoomService{}
 )
 
+type RoomService struct {
+	client common.RequestProcessor
+}
+
 func NewRoomService(client common.RequestProcessor) *RoomService {
 	return &RoomService{
 		client: client,
@@ -33,16 +34,16 @@ func NewRoomService(client common.RequestProcessor) *RoomService {
 }
 
 func (s *RoomService) GetAllRooms(ctx context.Context) (*common.ResourceList[room2.RoomData], error) {
-	return common.Get[common.ResourceList[room2.RoomData]](ctx, s.CollectionPath(), s.client)
+	return client.Get[common.ResourceList[room2.RoomData]](ctx, s.CollectionPath(), s.client)
 }
 
 func (s *RoomService) GetRoom(ctx context.Context, id string) (*room2.RoomData, error) {
 	path := s.ResourcePath(id)
-	return common.GetSingularResource[room2.RoomData](id, path, ctx, s.client, "room")
+	return client.GetSingularResource[room2.RoomData](id, path, ctx, s.client, "room")
 }
 
 func (s *RoomService) UpdateRoom(ctx context.Context, update room2.RoomUpdate) error {
-	result, err := common.Put[common.ResourceUpdateResponse](ctx, s.ResourcePath(update.ID), update, s.client)
+	result, err := client.Put[common.ResourceUpdateResponse](ctx, s.ResourcePath(update.ID), update, s.client)
 	if err != nil {
 		return err
 	}
@@ -53,10 +54,10 @@ func (s *RoomService) UpdateRoom(ctx context.Context, update room2.RoomUpdate) e
 }
 
 func (s *RoomService) DeleteRoom(ctx context.Context, id string) error {
-	err := common.Delete(ctx, s.ResourcePath(id), s.client)
+	err := client.Delete(ctx, s.ResourcePath(id), s.client)
 	return err
 }
 
 func (s *RoomService) CreateRoom(ctx context.Context, create room2.RoomCreate) (*common.Reference, error) {
-	return common.CreateResource(s.CollectionPath(), ctx, create, s.client, "room")
+	return client.CreateResource(s.CollectionPath(), ctx, create, s.client, "room")
 }
