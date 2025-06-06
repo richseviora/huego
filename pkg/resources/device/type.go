@@ -2,6 +2,7 @@ package device
 
 import (
 	"context"
+	"errors"
 	"github.com/richseviora/huego/pkg/resources/common"
 )
 
@@ -50,6 +51,24 @@ var (
 
 func (d Data) Identity() string {
 	return d.ID
+}
+
+func (d Data) GetLightServiceID() (string, error) {
+	for _, service := range d.Services {
+		if service.Rtype == "light" {
+			return service.Rid, nil
+		}
+	}
+	return "", errors.New("no light service found")
+}
+
+func (d Data) GetZigbeeConnectivityServiceID() (string, error) {
+	for _, service := range d.Services {
+		if service.Rtype == "zigbee_connectivity" {
+			return service.Rid, nil
+		}
+	}
+	return "", errors.New("no zigbee_connectivity service found")
 }
 
 type Service interface {
