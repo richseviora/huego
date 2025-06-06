@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/richseviora/huego/internal/client/handlers"
+	device2 "github.com/richseviora/huego/internal/services/device"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/services/room"
 	"github.com/richseviora/huego/internal/services/scene"
@@ -14,9 +15,11 @@ import (
 	"github.com/richseviora/huego/pkg/resources"
 	"github.com/richseviora/huego/pkg/resources/client"
 	"github.com/richseviora/huego/pkg/resources/common"
+	"github.com/richseviora/huego/pkg/resources/device"
 	light2 "github.com/richseviora/huego/pkg/resources/light"
 	room2 "github.com/richseviora/huego/pkg/resources/room"
 	scene2 "github.com/richseviora/huego/pkg/resources/scene"
+	"github.com/richseviora/huego/pkg/resources/zigbee_connectivity"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 
 	"net/http"
@@ -38,15 +41,25 @@ const (
 
 // APIClient handles API communication
 type APIClient struct {
-	baseURL      string
-	httpClient   *http.Client
-	timeout      time.Duration
-	keyStore     store.KeyStore
-	initMode     InitMode
-	lightService light2.LightService
-	sceneService scene2.SceneService
-	roomService  room2.RoomService
-	zoneService  zone2.ZoneService
+	baseURL                   string
+	httpClient                *http.Client
+	timeout                   time.Duration
+	keyStore                  store.KeyStore
+	initMode                  InitMode
+	lightService              light2.LightService
+	sceneService              scene2.SceneService
+	roomService               room2.RoomService
+	zoneService               zone2.ZoneService
+	deviceService             device.Service
+	zigbeeConnectivityService zigbee_connectivity.Service
+}
+
+func (c *APIClient) ZigbeeConnectivityService() zigbee_connectivity.Service {
+	return c.zigbeeConnectivityService
+}
+
+func (c *APIClient) DeviceService() device.Service {
+	return c.deviceService
 }
 
 func (c *APIClient) ZoneService() zone2.ZoneService {
@@ -102,6 +115,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	c.lightService = light.NewLightService(c)
 	c.roomService = room.NewRoomService(c)
 	c.zoneService = zone.NewZoneService(c)
+	c.deviceService = device2.NewDeviceManager(c)
 
 	for _, opt := range opts {
 		opt(c)

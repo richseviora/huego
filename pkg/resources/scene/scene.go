@@ -60,27 +60,24 @@ type SceneMetadata struct {
 	Name  string `json:"name"`
 	Image *Image `json:"image,omitempty"`
 }
-type Group struct {
-	Rid   string `json:"rid"`
-	Rtype string `json:"rtype"`
-}
+
 type Status struct {
 	Active     string    `json:"active"`
 	LastRecall time.Time `json:"last_recall"`
 }
 
 type SceneData struct {
-	ID          string         `json:"id"`
-	IDV1        string         `json:"id_v1"`
-	Actions     []ActionTarget `json:"actions"`
-	Palette     Palette        `json:"palette"`
-	Recall      Recall         `json:"recall"`
-	Metadata    SceneMetadata  `json:"metadata"`
-	Group       Group          `json:"group"`
-	Speed       float64        `json:"speed"`
-	AutoDynamic bool           `json:"auto_dynamic"`
-	Status      Status         `json:"status"`
-	Type        string         `json:"type"`
+	ID          string           `json:"id"`
+	IDV1        string           `json:"id_v1"`
+	Actions     []ActionTarget   `json:"actions"`
+	Palette     Palette          `json:"palette"`
+	Recall      Recall           `json:"recall"`
+	Metadata    SceneMetadata    `json:"metadata"`
+	Group       common.Reference `json:"group"`
+	Speed       float64          `json:"speed"`
+	AutoDynamic bool             `json:"auto_dynamic"`
+	Status      Status           `json:"status"`
+	Type        string           `json:"type"`
 }
 
 func (s SceneData) Identity() string {
@@ -90,9 +87,9 @@ func (s SceneData) Identity() string {
 var _ common.Identable = &SceneData{}
 
 type SceneCreate struct {
-	Metadata SceneMetadata  `json:"metadata"`
-	Actions  []ActionTarget `json:"actions"`
-	Group    Group          `json:"group"`
+	Metadata SceneMetadata    `json:"metadata"`
+	Actions  []ActionTarget   `json:"actions"`
+	Group    common.Reference `json:"group"`
 }
 
 type SceneUpdate struct {
