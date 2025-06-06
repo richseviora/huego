@@ -82,7 +82,7 @@ func Get[T any](ctx context.Context, path string, c common.RequestProcessor) (*T
 	}
 
 	var result T
-	if err := json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
 		fmt.Printf("Failed to decode response: %v\n", err)
 		fmt.Printf("Response body: %s\n", string(bodyBytes))
 		return nil, err

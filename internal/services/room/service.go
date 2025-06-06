@@ -2,7 +2,6 @@ package room
 
 import (
 	"context"
-	"fmt"
 	"github.com/richseviora/huego/internal/client/handlers"
 	common2 "github.com/richseviora/huego/internal/services/common"
 	"github.com/richseviora/huego/pkg/resources/common"
@@ -44,14 +43,8 @@ func (s *RoomService) GetRoom(ctx context.Context, id string) (*room.RoomData, e
 }
 
 func (s *RoomService) UpdateRoom(ctx context.Context, update room.RoomUpdate) error {
-	result, err := handlers.Put[common.ResourceUpdateResponse](ctx, s.ResourcePath(update.ID), update, s.client)
-	if err != nil {
-		return err
-	}
-	if len(result.Errors) > 0 {
-		return fmt.Errorf("failed to update light: %v", result.Errors)
-	}
-	return nil
+	_, err := handlers.UpdateResource[room.RoomUpdate](s.ResourcePath(update.ID), ctx, update, s.client, "room")
+	return err
 }
 
 func (s *RoomService) DeleteRoom(ctx context.Context, id string) error {

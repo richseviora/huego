@@ -141,7 +141,11 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 	}
 
 	req = req.WithContext(ctx)
-	return c.httpClient.Do(req)
+	response, err := c.httpClient.Do(req)
+	if response.StatusCode == 403 {
+		return nil, client.ErrUnauthorized
+	}
+	return response, err
 }
 
 func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {

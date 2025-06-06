@@ -88,6 +88,14 @@ type Light struct {
 	Type      string               `json:"type"`
 }
 
+func (l Light) Identity() string {
+	return l.ID
+}
+
+var (
+	_ common.Identable = &Light{}
+)
+
 type LightService interface {
 	GetLight(ctx context.Context, id string) (*Light, error)
 	GetAllLights(ctx context.Context) (*common.ResourceList[Light], error)
