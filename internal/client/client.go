@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/richseviora/huego/internal/client/handlers"
@@ -104,8 +105,12 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
+	baseUrl := ipAddress
+	if !strings.HasPrefix(baseUrl, "https://") && !strings.HasPrefix(baseUrl, "http://") {
+		baseUrl = "https://" + baseUrl
+	}
 	c := &APIClient{
-		baseURL: "https://" + ipAddress,
+		baseURL: baseUrl,
 		httpClient: &http.Client{
 			Transport: tr,
 			Timeout:   30 * time.Second,
