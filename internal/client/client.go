@@ -22,6 +22,7 @@ import (
 	scene2 "github.com/richseviora/huego/pkg/resources/scene"
 	"github.com/richseviora/huego/pkg/resources/zigbee_connectivity"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
+	"golang.org/x/time/rate"
 
 	"net/http"
 	"os"
@@ -47,6 +48,7 @@ type APIClient struct {
 	timeout                   time.Duration
 	keyStore                  store.KeyStore
 	initMode                  InitMode
+	limiter                   *rate.Limiter
 	lightService              light2.LightService
 	sceneService              scene2.SceneService
 	roomService               room2.RoomService
@@ -111,6 +113,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		timeout:  30 * time.Second,
 		keyStore: keyStore,
 		initMode: initMode,
+		limiter:  rate.NewLimiter(rate.Every(time.Second/10), 1),
 	}
 	c.sceneService = scene.NewSceneService(c)
 	c.lightService = light.NewLightService(c)
@@ -156,8 +159,18 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 		req.Header.Set("hue-application-key", key)
 	}
 
+	err = c.limiter.Wait(ctx)
+	if err != nil {
+		return nil, err
+	}
 	req = req.WithContext(ctx)
 	response, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode == 503 {
+		return nil, client.ErrServiceUnavailable
+	}
 	if response.StatusCode == 403 {
 		return nil, client.ErrUnauthorized
 	}

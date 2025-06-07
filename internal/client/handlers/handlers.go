@@ -84,6 +84,7 @@ func Get[T any](ctx context.Context, path string, c common.RequestProcessor) (*T
 	var result T
 	if err = json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
 		fmt.Printf("Failed to decode response: %v\n", err)
+		fmt.Printf("URL: %s\n", req.URL.String())
 		fmt.Printf("Response body: %s\n", string(bodyBytes))
 		return nil, err
 	}
@@ -130,8 +131,16 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 	}
 	defer resp.Body.Close()
 
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %v", err)
+	}
+
 	var result T
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
+		fmt.Printf("Failed to decode response: %v\n", err)
+		fmt.Printf("URL: %s\n", req.URL.String())
+		fmt.Printf("Response body: %s\n", string(bodyBytes))
 		return nil, err
 	}
 
