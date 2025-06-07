@@ -5,6 +5,10 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/richseviora/huego/internal/client/handlers"
 	device2 "github.com/richseviora/huego/internal/services/device"
 	"github.com/richseviora/huego/internal/services/light"
@@ -23,10 +27,6 @@ import (
 	"github.com/richseviora/huego/pkg/resources/zigbee_connectivity"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 	"golang.org/x/time/rate"
-
-	"net/http"
-	"os"
-	"time"
 )
 
 // InitMode defines the initialization mode for the API client
@@ -139,7 +139,7 @@ func (c *APIClient) Initialize(ctx context.Context) error {
 		return nil
 	}
 	// Get Attempt to Set Key
-	return CreateApplicationKey(ctx, c)
+	return createApplicationKey(ctx, c)
 }
 
 func (c *APIClient) BaseURL() string {
@@ -167,6 +167,9 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
+	}
+	if response.StatusCode == 404 {
+		return nil, client.ErrNotFound
 	}
 	if response.StatusCode == 503 {
 		return nil, client.ErrServiceUnavailable
@@ -210,8 +213,8 @@ func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
 	return c.keyStore.Set("application-key", key)
 }
 
-func CreateApplicationKey(ctx context.Context, c *APIClient) error {
-	res, err := c.RegisterDevice(ctx, "huego", "1234567890")
+func createApplicationKey(ctx context.Context, c *APIClient) error {
+	res, err := c.registerDevice(ctx, "huego", "1234567890")
 	if err != nil {
 		fmt.Printf("Failed to register device: %v\n", err)
 		return err
@@ -229,8 +232,8 @@ func CreateApplicationKey(ctx context.Context, c *APIClient) error {
 	return errors.New("failed to register device")
 }
 
-// RegisterDevice sends a registration request to the Hue bridge
-func (c *APIClient) RegisterDevice(ctx context.Context, appName, instanceName string) (*resources.BridgeRegistrationResponseBody, error) {
+// registerDevice sends a registration request to the Hue bridge
+func (c *APIClient) registerDevice(ctx context.Context, appName, instanceName string) (*resources.BridgeRegistrationResponseBody, error) {
 	request := resources.BridgeRegistrationRequest{
 		DeviceType:        appName + "#" + instanceName,
 		GenerateClientKey: true,

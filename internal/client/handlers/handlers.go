@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/richseviora/huego/pkg/resources/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"io"
 	"net/http"
@@ -60,7 +61,15 @@ func UpdateResource[T any](path string, ctx context.Context, create T, client co
 	return &result.Data[0], nil
 }
 
-// Get performs a GET request and unmarshals the response into the provided type
+func decodeResponse[T any](body []byte, url string) (*T, error) {
+	var result T
+	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&result); err != nil {
+		fmt.Printf("Failed to decode response from %s: %v\n", url, err)
+		return nil, client.ErrBadResponse
+	}
+	return &result, nil
+}
+
 func Get[T any](ctx context.Context, path string, c common.RequestProcessor) (*T, error) {
 	req, err := http.NewRequest(http.MethodGet, c.BaseURL()+path, nil)
 	if err != nil {
@@ -81,15 +90,7 @@ func Get[T any](ctx context.Context, path string, c common.RequestProcessor) (*T
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	var result T
-	if err = json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
-		fmt.Printf("Failed to decode response: %v\n", err)
-		fmt.Printf("URL: %s\n", req.URL.String())
-		fmt.Printf("Response body: %s\n", string(bodyBytes))
-		return nil, err
-	}
-
-	return &result, nil
+	return decodeResponse[T](bodyBytes, req.URL.String())
 }
 
 // Delete performs a DELETE request for the specified resource
@@ -136,15 +137,7 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	var result T
-	if err := json.NewDecoder(bytes.NewReader(bodyBytes)).Decode(&result); err != nil {
-		fmt.Printf("Failed to decode response: %v\n", err)
-		fmt.Printf("URL: %s\n", req.URL.String())
-		fmt.Printf("Response body: %s\n", string(bodyBytes))
-		return nil, err
-	}
-
-	return &result, nil
+	return decodeResponse[T](bodyBytes, req.URL.String())
 }
 
 func Put[T any](ctx context.Context, path string, body interface{}, c common.RequestProcessor) (*T, error) {
@@ -165,10 +158,10 @@ func Put[T any](ctx context.Context, path string, body interface{}, c common.Req
 	}
 	defer resp.Body.Close()
 
-	var result T
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	return &result, nil
+	return decodeResponse[T](bodyBytes, req.URL.String())
 }
