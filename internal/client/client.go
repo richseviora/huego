@@ -10,6 +10,7 @@ import (
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/services/room"
 	"github.com/richseviora/huego/internal/services/scene"
+	zigbee_connectivity2 "github.com/richseviora/huego/internal/services/zigbee_connectivity"
 	"github.com/richseviora/huego/internal/services/zone"
 	"github.com/richseviora/huego/internal/store"
 	"github.com/richseviora/huego/pkg/resources"
@@ -116,6 +117,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	c.roomService = room.NewRoomService(c)
 	c.zoneService = zone.NewZoneService(c)
 	c.deviceService = device2.NewDeviceManager(c)
+	c.zigbeeConnectivityService = zigbee_connectivity2.NewManager(c)
 
 	for _, opt := range opts {
 		opt(c)

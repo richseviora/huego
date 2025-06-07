@@ -15,7 +15,7 @@ var (
 	_ zigbee_connectivity.Service = &Manager{}
 )
 
-func NewZigbeeConnectivityService(client common.RequestProcessor) *Manager {
+func NewManager(client common.RequestProcessor) *Manager {
 	return &Manager{
 		client: client,
 	}
