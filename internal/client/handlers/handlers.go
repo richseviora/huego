@@ -45,6 +45,7 @@ func CreateResource[T any](path string, ctx context.Context, create T, client co
 		return nil, err
 	}
 	if len(result.Errors) > 0 {
+		fmt.Printf("Failed to Create Resource %s: %v\n", resourceName, result.Errors)
 		return nil, fmt.Errorf("failed to create resource %s: %v", resourceName, result.Errors)
 	}
 	return &result.Data[0], nil
@@ -120,6 +121,7 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 		return nil, err
 	}
 
+	fmt.Printf("Sending POST request to %s with body: %s\n", c.BaseURL()+path, string(jsonBody))
 	req, err := http.NewRequest(http.MethodPost, c.BaseURL()+path, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err
@@ -145,7 +147,7 @@ func Put[T any](ctx context.Context, path string, body interface{}, c common.Req
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("Sending PUT request to %s with body: %s\n", c.BaseURL()+path, string(jsonBody))
 	req, err := http.NewRequest(http.MethodPut, c.BaseURL()+path, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err

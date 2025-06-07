@@ -110,7 +110,7 @@ func (a *Area) String() string {
 }
 
 // UnmarshalJSON implements json.Unmarshaler interface for Area
-func (a Area) UnmarshalJSON(data []byte) error {
+func (a *Area) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
@@ -119,7 +119,7 @@ func (a Area) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	a = parsed
+	*a = parsed
 	return nil
 }
 
