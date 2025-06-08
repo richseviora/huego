@@ -1,8 +1,11 @@
 package client
 
 import (
+	"github.com/richseviora/huego/pkg/resources/behavior_instance"
+	"github.com/richseviora/huego/pkg/resources/behavior_script"
 	"github.com/richseviora/huego/pkg/resources/device"
 	"github.com/richseviora/huego/pkg/resources/light"
+	"github.com/richseviora/huego/pkg/resources/motion"
 	"github.com/richseviora/huego/pkg/resources/room"
 	"github.com/richseviora/huego/pkg/resources/scene"
 	"github.com/richseviora/huego/pkg/resources/zigbee_connectivity"
@@ -16,4 +19,7 @@ type HueServiceClient interface {
 	LightService() light.LightService
 	DeviceService() device.Service
 	ZigbeeConnectivityService() zigbee_connectivity.Service
+	BehaviorInstanceService() behavior_instance.Service
+	BehaviorScriptService() behavior_script.Service
+	MotionService() motion.Service
 }

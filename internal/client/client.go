@@ -5,6 +5,12 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	behavior_instance2 "github.com/richseviora/huego/internal/services/behavior_instance"
+	behavior_script2 "github.com/richseviora/huego/internal/services/behavior_script"
+	motion2 "github.com/richseviora/huego/internal/services/motion"
+	"github.com/richseviora/huego/pkg/resources/behavior_instance"
+	"github.com/richseviora/huego/pkg/resources/behavior_script"
+	"github.com/richseviora/huego/pkg/resources/motion"
 	"net/http"
 	"os"
 	"strings"
@@ -56,6 +62,21 @@ type APIClient struct {
 	zoneService               zone2.ZoneService
 	deviceService             device.Service
 	zigbeeConnectivityService zigbee_connectivity.Service
+	motionService             motion.Service
+	behaviorInstanceService   behavior_instance.Service
+	behaviorScriptService     behavior_script.Service
+}
+
+func (c *APIClient) BehaviorInstanceService() behavior_instance.Service {
+	return c.behaviorInstanceService
+}
+
+func (c *APIClient) BehaviorScriptService() behavior_script.Service {
+	return c.behaviorScriptService
+}
+
+func (c *APIClient) MotionService() motion.Service {
+	return c.motionService
 }
 
 func (c *APIClient) ZigbeeConnectivityService() zigbee_connectivity.Service {
@@ -126,6 +147,9 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 	c.zoneService = zone.NewZoneService(c)
 	c.deviceService = device2.NewDeviceManager(c)
 	c.zigbeeConnectivityService = zigbee_connectivity2.NewManager(c)
+	c.motionService = motion2.NewManager(c)
+	c.behaviorInstanceService = behavior_instance2.NewManager(c)
+	c.behaviorScriptService = behavior_script2.NewManager(c)
 
 	for _, opt := range opts {
 		opt(c)
