@@ -13,6 +13,8 @@ type Metadata struct {
 	Name     string `json:"name"`
 	Category string `json:"category"`
 }
+
+// Data - the canonical name is in the Metadata field. 'Motion Sensor' is an example
 type Data struct {
 	ID                  string          `json:"id"`
 	Type                string          `json:"type"`

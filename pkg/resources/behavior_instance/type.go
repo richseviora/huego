@@ -12,8 +12,11 @@ type State struct {
 	ModelID string `json:"model_id"`
 }
 type DaylightSensitivity struct {
+	// 0 (low sensitivity) to 65535 (highest). Appears to be exponential.
+	// 14800 is medium
 	DarkThreshold int `json:"dark_threshold"`
-	Offset        int `json:"offset"`
+	// Always appears to be 7000.
+	Offset int `json:"offset"`
 }
 type Settings struct {
 	DaylightSensitivity DaylightSensitivity `json:"daylight_sensitivity"`
@@ -22,9 +25,17 @@ type Action struct {
 	// The reference here must be a Scene.
 	Recall common.Reference `json:"recall"`
 }
+type NoMotionAction struct {
+	Action string `json:"action"`
+}
 type RecallSingle struct {
 	Action Action `json:"action"`
 }
+
+type RecallSingleNoMotion struct {
+	Action string `json:"action"`
+}
+
 type OnMotion struct {
 	RecallSingle []RecallSingle `json:"recall_single"`
 }
@@ -32,8 +43,8 @@ type After struct {
 	Minutes int `json:"minutes"`
 }
 type OnNoMotion struct {
-	After        After          `json:"after"`
-	RecallSingle []RecallSingle `json:"recall_single"`
+	After        After                  `json:"after"`
+	RecallSingle []RecallSingleNoMotion `json:"recall_single"`
 }
 type Time struct {
 	Hour   int `json:"hour"`

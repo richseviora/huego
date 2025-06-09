@@ -20,6 +20,9 @@ type Sensitivity struct {
 	Sensitivity    int    `json:"sensitivity"`
 	SensitivityMax int    `json:"sensitivity_max"`
 }
+type SensitivityUpdate struct {
+	Sensitivity int `json:"sensitivity"`
+}
 type Data struct {
 	ID          string           `json:"id"`
 	IDV1        string           `json:"id_v1"`
@@ -28,6 +31,11 @@ type Data struct {
 	Motion      Motion           `json:"motion"`
 	Sensitivity Sensitivity      `json:"sensitivity"`
 	Type        string           `json:"type"`
+}
+
+type UpdateRequest struct {
+	Enabled     bool               `json:"enabled"`
+	Sensitivity *SensitivityUpdate `json:"sensitivity"`
 }
 
 var (
@@ -41,4 +49,5 @@ func (d Data) Identity() string {
 type Service interface {
 	GetAllMotion(ctx context.Context) (*common.ResourceList[Data], error)
 	GetMotion(ctx context.Context, id string) (*Data, error)
+	UpdateMotion(ctx context.Context, id string, update UpdateRequest) (*common.Reference, error)
 }

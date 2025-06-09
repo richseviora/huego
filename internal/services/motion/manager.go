@@ -26,6 +26,10 @@ func (m *Manager) GetAllMotion(ctx context.Context) (*common.ResourceList[motion
 	return handlers.Get[common.ResourceList[motion.Data]](ctx, m.CollectionPath(), m.client)
 }
 
+func (m *Manager) UpdateMotion(ctx context.Context, id string, update motion.UpdateRequest) (*common.Reference, error) {
+	return handlers.UpdateResource(m.ResourcePath(id), ctx, update, m.client, "motion")
+}
+
 func (m *Manager) GetMotion(ctx context.Context, id string) (*motion.Data, error) {
 	return handlers.GetSingularResource[motion.Data](id, m.ResourcePath(id), ctx, m.client, "motion")
 }
