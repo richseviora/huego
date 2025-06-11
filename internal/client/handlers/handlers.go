@@ -121,7 +121,10 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 		return nil, err
 	}
 
-	fmt.Printf("Sending POST request to %s with body: %s\n", c.BaseURL()+path, string(jsonBody))
+	c.Logger().Trace("Sending POST request", map[string]interface{}{
+		"path": c.BaseURL() + path,
+		"body": body,
+	})
 	req, err := http.NewRequest(http.MethodPost, c.BaseURL()+path, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err
@@ -135,8 +138,9 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
-	c.Logger().Trace("Received Response Body", map[string]interface{}{
-		"body": string(bodyBytes),
+	c.Logger().Trace("Received POST Response", map[string]interface{}{
+		"body":   string(bodyBytes),
+		"status": resp.Status,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
