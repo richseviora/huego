@@ -8,6 +8,7 @@ import (
 	behavior_instance2 "github.com/richseviora/huego/internal/services/behavior_instance"
 	behavior_script2 "github.com/richseviora/huego/internal/services/behavior_script"
 	motion2 "github.com/richseviora/huego/internal/services/motion"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/behavior_instance"
 	"github.com/richseviora/huego/pkg/resources/behavior_script"
 	"github.com/richseviora/huego/pkg/resources/motion"
@@ -50,6 +51,7 @@ const (
 
 // APIClient handles API communication
 type APIClient struct {
+	logger                    logger.Logger
 	baseURL                   string
 	httpClient                *http.Client
 	timeout                   time.Duration
@@ -65,6 +67,10 @@ type APIClient struct {
 	motionService             motion.Service
 	behaviorInstanceService   behavior_instance.Service
 	behaviorScriptService     behavior_script.Service
+}
+
+func (c *APIClient) Logger() logger.Logger {
+	return c.logger
 }
 
 func (c *APIClient) BehaviorInstanceService() behavior_instance.Service {
@@ -112,7 +118,7 @@ var (
 type ClientOption func(*APIClient)
 
 // NewAPIClient creates a new API client instance
-func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *APIClient {
+func NewAPIClient(ipAddress string, initMode InitMode, logger logger.Logger, opts ...ClientOption) *APIClient {
 	var keyStore store.KeyStore = nil
 	var err error = nil
 	if initMode != EnvOnly {
@@ -131,6 +137,7 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		baseUrl = "https://" + baseUrl
 	}
 	c := &APIClient{
+		logger:  logger,
 		baseURL: baseUrl,
 		httpClient: &http.Client{
 			Transport: tr,
@@ -141,15 +148,15 @@ func NewAPIClient(ipAddress string, initMode InitMode, opts ...ClientOption) *AP
 		initMode: initMode,
 		limiter:  rate.NewLimiter(rate.Every(time.Second/10), 1),
 	}
-	c.sceneService = scene.NewSceneService(c)
-	c.lightService = light.NewLightService(c)
-	c.roomService = room.NewRoomService(c)
-	c.zoneService = zone.NewZoneService(c)
-	c.deviceService = device2.NewDeviceManager(c)
-	c.zigbeeConnectivityService = zigbee_connectivity2.NewManager(c)
-	c.motionService = motion2.NewManager(c)
-	c.behaviorInstanceService = behavior_instance2.NewManager(c)
-	c.behaviorScriptService = behavior_script2.NewManager(c)
+	c.sceneService = scene.NewSceneService(c, c.logger)
+	c.lightService = light.NewLightService(c, c.logger)
+	c.roomService = room.NewRoomService(c, c.logger)
+	c.zoneService = zone.NewZoneService(c, c.logger)
+	c.deviceService = device2.NewDeviceManager(c, c.logger)
+	c.zigbeeConnectivityService = zigbee_connectivity2.NewManager(c, c.logger)
+	c.motionService = motion2.NewManager(c, c.logger)
+	c.behaviorInstanceService = behavior_instance2.NewManager(c, c.logger)
+	c.behaviorScriptService = behavior_script2.NewManager(c, c.logger)
 
 	for _, opt := range opts {
 		opt(c)

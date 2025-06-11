@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"github.com/richseviora/huego/pkg/logger"
 	"net/http"
 )
 
@@ -31,6 +32,7 @@ type ResourceUpdateResponse struct {
 }
 
 type RequestProcessor interface {
+	Logger() logger.Logger
 	Do(ctx context.Context, req *http.Request) (*http.Response, error)
 	BaseURL() string
 }

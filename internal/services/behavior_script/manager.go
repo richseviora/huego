@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/richseviora/huego/internal/client/handlers"
 	common2 "github.com/richseviora/huego/internal/services/common"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/behavior_script"
 	"github.com/richseviora/huego/pkg/resources/common"
 )
@@ -12,6 +13,7 @@ const basePath = "/clip/v2/resource/behavior_script"
 
 type Manager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
 func (m *Manager) GetAllBehaviorScripts(ctx context.Context) (*common.ResourceList[behavior_script.Data], error) {
@@ -35,8 +37,9 @@ var (
 	_ common2.ResourcePathable = &Manager{}
 )
 
-func NewManager(client common.RequestProcessor) *Manager {
+func NewManager(client common.RequestProcessor, logger logger.Logger) *Manager {
 	return &Manager{
 		client: client,
+		logger: logger,
 	}
 }

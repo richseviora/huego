@@ -2,6 +2,7 @@ package device
 
 import (
 	"context"
+	"github.com/richseviora/huego/pkg/logger"
 
 	"github.com/richseviora/huego/internal/client/handlers"
 	"github.com/richseviora/huego/pkg/resources/common"
@@ -10,15 +11,17 @@ import (
 
 type DeviceManager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
 var (
 	_ device.Service = &DeviceManager{}
 )
 
-func NewDeviceManager(client common.RequestProcessor) *DeviceManager {
+func NewDeviceManager(client common.RequestProcessor, logger logger.Logger) *DeviceManager {
 	return &DeviceManager{
 		client: client,
+		logger: logger,
 	}
 }
 

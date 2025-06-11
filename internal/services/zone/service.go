@@ -3,17 +3,20 @@ package zone
 import (
 	"context"
 	"github.com/richseviora/huego/internal/client/handlers"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	zone2 "github.com/richseviora/huego/pkg/resources/zone"
 )
 
 type ZoneManager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
-func NewZoneService(client common.RequestProcessor) *ZoneManager {
+func NewZoneService(client common.RequestProcessor, logger logger.Logger) *ZoneManager {
 	return &ZoneManager{
 		client: client,
+		logger: logger,
 	}
 }
 

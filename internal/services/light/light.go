@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/richseviora/huego/internal/client/handlers"
 	common2 "github.com/richseviora/huego/internal/services/common"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/light"
 )
@@ -11,6 +12,7 @@ import (
 // LightManager handles light-related API operations
 type LightManager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
 var (
@@ -19,9 +21,10 @@ var (
 )
 
 // NewLightService creates a new LightManager instance
-func NewLightService(client common.RequestProcessor) *LightManager {
+func NewLightService(client common.RequestProcessor, logger logger.Logger) *LightManager {
 	return &LightManager{
 		client: client,
+		logger: logger,
 	}
 }
 

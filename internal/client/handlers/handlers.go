@@ -135,6 +135,9 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
+	c.Logger().Trace("Received Response Body", map[string]interface{}{
+		"body": string(bodyBytes),
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
@@ -161,6 +164,9 @@ func Put[T any](ctx context.Context, path string, body interface{}, c common.Req
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
+	c.Logger().Trace("Received Response Body", map[string]interface{}{
+		"body": string(bodyBytes),
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}

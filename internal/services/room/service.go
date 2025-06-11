@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/richseviora/huego/internal/client/handlers"
 	common2 "github.com/richseviora/huego/internal/services/common"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/room"
 )
@@ -25,11 +26,13 @@ var (
 
 type RoomService struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
-func NewRoomService(client common.RequestProcessor) *RoomService {
+func NewRoomService(client common.RequestProcessor, logger logger.Logger) *RoomService {
 	return &RoomService{
 		client: client,
+		logger: logger,
 	}
 }
 

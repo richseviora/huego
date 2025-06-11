@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/richseviora/huego/internal/client/handlers"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	scene2 "github.com/richseviora/huego/pkg/resources/scene"
 )
@@ -14,11 +15,13 @@ var (
 
 type SceneManager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
-func NewSceneService(client common.RequestProcessor) *SceneManager {
+func NewSceneService(client common.RequestProcessor, logger logger.Logger) *SceneManager {
 	return &SceneManager{
 		client: client,
+		logger: logger,
 	}
 }
 

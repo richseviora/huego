@@ -3,21 +3,24 @@ package zigbee_connectivity
 import (
 	"context"
 	"github.com/richseviora/huego/internal/client/handlers"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/zigbee_connectivity"
 )
 
 type Manager struct {
 	client common.RequestProcessor
+	logger logger.Logger
 }
 
 var (
 	_ zigbee_connectivity.Service = &Manager{}
 )
 
-func NewManager(client common.RequestProcessor) *Manager {
+func NewManager(client common.RequestProcessor, logger logger.Logger) *Manager {
 	return &Manager{
 		client: client,
+		logger: logger,
 	}
 }
 

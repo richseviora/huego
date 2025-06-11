@@ -5,10 +5,11 @@ import (
 	"errors"
 	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/internal/store"
+	"github.com/richseviora/huego/pkg/logger"
 	client2 "github.com/richseviora/huego/pkg/resources/client"
 )
 
-func NewClientFromMDNS() (client2.HueServiceClient, error) {
+func NewClientFromMDNS(logger logger.Logger) (client2.HueServiceClient, error) {
 	bridges, err := store.DiscoverBridgesWithMDNS()
 	if err != nil {
 		return nil, err
@@ -16,7 +17,7 @@ func NewClientFromMDNS() (client2.HueServiceClient, error) {
 	if len(bridges) == 0 {
 		return nil, errors.New("no bridges found")
 	}
-	c := client.NewAPIClient(bridges[0].InternalIPAddress, client.EnvOnly)
+	c := client.NewAPIClient(bridges[0].InternalIPAddress, client.EnvOnly, logger)
 	err = c.Initialize(context.Background())
 	if err != nil {
 		return nil, err
