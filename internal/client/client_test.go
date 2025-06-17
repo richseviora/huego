@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"github.com/richseviora/huego/pkg/logger"
 	"github.com/richseviora/huego/pkg/resources/common"
 	room2 "github.com/richseviora/huego/pkg/resources/room"
 	"io"
@@ -29,7 +30,7 @@ func Test_APIClientParse(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	client := NewAPIClient(server.URL, LocalOnly)
+	client := NewAPIClient(server.URL, LocalOnly, logger.NoopLogger{})
 	client.setApplicationKey(context.Background(), "1234567890")
 	err := client.Initialize(context.Background())
 	if err != nil {
@@ -70,7 +71,7 @@ func Test_APIClient(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	client := NewAPIClient(server.URL, LocalOnly)
+	client := NewAPIClient(server.URL, LocalOnly, logger.NoopLogger{})
 	client.setApplicationKey(context.Background(), "1234567890")
 	err := client.Initialize(context.Background())
 	if err != nil {
