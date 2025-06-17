@@ -35,7 +35,7 @@ type Data struct {
 
 type UpdateRequest struct {
 	Enabled     bool               `json:"enabled"`
-	Sensitivity *SensitivityUpdate `json:"sensitivity"`
+	Sensitivity *SensitivityUpdate `json:"sensitivity,omitempty"`
 }
 
 var (
