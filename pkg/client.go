@@ -10,7 +10,7 @@ import (
 )
 
 func NewClientFromMDNS(logger logger.Logger) (client2.HueServiceClient, error) {
-	bridges, err := store.DiscoverBridgesWithMDNS()
+	bridges, err := store.DiscoverBridgesWithMDNS(logger)
 	if err != nil {
 		return nil, err
 	}
