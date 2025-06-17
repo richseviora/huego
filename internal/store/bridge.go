@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/grandcat/zeroconf"
+	"github.com/richseviora/huego/pkg/logger"
 	"net/http"
 	"time"
 )
@@ -50,12 +51,14 @@ func DiscoverBridgesWithMDNS() ([]Bridge, error) {
 	return bridges, nil
 }
 
-func DiscoverBridges() ([]Bridge, error) {
+func DiscoverBridges(logger logger.Logger) ([]Bridge, error) {
 	// Try to load from cache first
 	if cache, err := LoadBridgeCache(); err == nil {
 		// Use cache if it's less than 1 hour old
 		if time.Since(cache.Timestamp) < time.Hour {
-			fmt.Printf("Found %d bridges in cache\n", len(cache.Bridges))
+			logger.Info("Found Bridges in Cache", map[string]interface{}{
+				"bridges": len(cache.Bridges),
+			})
 			return cache.Bridges, nil
 		}
 	}
@@ -67,7 +70,9 @@ func DiscoverBridges() ([]Bridge, error) {
 			Timestamp: time.Now(),
 		}
 		_ = SaveBridgeCache(cache)
-		fmt.Printf("Found %d bridges via mDNS\n", len(bridges))
+		logger.Info("Found Bridges via MDNS", map[string]interface{}{
+			"bridges": len(cache.Bridges),
+		})
 		return bridges, nil
 	}
 
@@ -91,6 +96,9 @@ func DiscoverBridges() ([]Bridge, error) {
 	}
 	_ = SaveBridgeCache(cache)
 
-	fmt.Printf("Found %d bridges via HTTP\n", len(bridges))
+	logger.Info("Found Bridges via HTTP", map[string]interface{}{
+		"bridges": len(bridges),
+	})
+
 	return bridges, nil
 }

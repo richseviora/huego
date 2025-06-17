@@ -2,51 +2,64 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/store"
+	"github.com/richseviora/huego/pkg/logger"
 	"time"
 )
 
-func TestConnection(ipAddress string) error {
-	client := client.NewAPIClient(ipAddress, client.EnvThenLocal)
-	err := client.Initialize(context.Background())
+func TestConnection(ipAddress string, l logger.Logger) error {
+	c := client.NewAPIClient(ipAddress, client.EnvThenLocal, l)
+	err := c.Initialize(context.Background())
 	if err != nil {
-		fmt.Printf("Initialization Failed: %v\n", err)
+		l.Error("Initialization Failed: %v\n", map[string]interface{}{
+			"error": err,
+		})
 		return err
 	}
-	lightService := light.NewLightService(client)
+	lightService := light.NewLightService(c, logger.NoopLogger{})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	lights, err := lightService.GetAllLights(ctx)
 	if err != nil {
-		fmt.Printf("Connection test failed: %v\n", err)
+		l.Error("Connection Test Failed: %v\n", map[string]interface{}{
+			"error": err,
+		})
 		return err
 	}
 
-	fmt.Printf("Connection successful! Found %d lights\n", len(lights.Data))
+	l.Info("Connection Test Successful", map[string]interface{}{
+		"lights": len(lights.Data),
+	})
 	for _, light := range lights.Data {
-		fmt.Printf("- Light: %s (ID: %s)\n", light.Metadata.Name, light.ID)
+		l.Info("Light", map[string]interface{}{"name": light.Metadata.Name, "id": light.ID})
 	}
 	return nil
 }
 
 func main() {
-	bridges, err := store.DiscoverBridges()
+	l := logger.NewLogger()
+	bridges, err := store.DiscoverBridges(l)
 	if err != nil {
-		fmt.Printf("Failed to discover bridges: %v\n", err)
+		l.Error("Failed to discover bridges: %v\n", map[string]interface{}{
+			"error": err,
+		})
 		return
 	}
 
 	for _, bridge := range bridges {
-		fmt.Printf("Found bridge: %s at %s\n", bridge.ID, bridge.InternalIPAddress)
+		l.Info("Found bridge", map[string]interface{}{
+			"bridge": bridge,
+		})
 	}
 
-	err = TestConnection(bridges[0].InternalIPAddress)
+	err = TestConnection(bridges[0].InternalIPAddress, l)
 	if err != nil {
-		fmt.Printf("ABEND Connection test failed: %v\n", err)
+		l.Error("ABEND Connection test failed", map[string]interface{}{
+			"error": err,
+		})
 	}
 }

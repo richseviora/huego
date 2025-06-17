@@ -129,8 +129,8 @@ func Post[T any](ctx context.Context, path string, body interface{}, c common.Re
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.Do(ctx, req)
 	if err != nil {
 		return nil, err

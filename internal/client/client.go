@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	behavior_instance2 "github.com/richseviora/huego/internal/services/behavior_instance"
 	behavior_script2 "github.com/richseviora/huego/internal/services/behavior_script"
 	motion2 "github.com/richseviora/huego/internal/services/motion"
@@ -124,7 +123,9 @@ func NewAPIClient(ipAddress string, initMode InitMode, logger logger.Logger, opt
 	if initMode != EnvOnly {
 		keyStore, err = store.NewDiskKeyStore("hue-keys.json")
 		if err != nil {
-			fmt.Printf("Failed to load key store: %v\n", err)
+			logger.Error("Failed to Load Key Store", map[string]interface{}{
+				"error": err,
+			})
 			panic(err)
 		}
 	}
@@ -252,7 +253,9 @@ func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
 func createApplicationKey(ctx context.Context, c *APIClient) error {
 	res, err := c.registerDevice(ctx, "huego", "1234567890")
 	if err != nil {
-		fmt.Printf("Failed to register device: %v\n", err)
+		c.Logger().Error("Failed to register device", map[string]interface{}{
+			"error": err,
+		})
 		return err
 	}
 	for _, response := range *res {
@@ -260,7 +263,9 @@ func createApplicationKey(ctx context.Context, c *APIClient) error {
 			return c.setApplicationKey(ctx, response.Success.Username)
 		}
 		if response.Error != nil {
-			fmt.Printf("Failed to register device %v", response.Error)
+			c.Logger().Error("Failed to register device", map[string]interface{}{
+				"error": err,
+			})
 			return errors.New("failed to register device")
 		}
 	}
