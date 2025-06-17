@@ -19,7 +19,7 @@ type Bridge struct {
 const url = "https://discovery.meethue.com"
 const discoveryTimeout = time.Second * 5
 
-func DiscoverBridgesWithMDNS() ([]Bridge, error) {
+func DiscoverBridgesWithMDNS(l logger.Logger) ([]Bridge, error) {
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize resolver: %v", err)
@@ -32,7 +32,9 @@ func DiscoverBridgesWithMDNS() ([]Bridge, error) {
 	go func() {
 		err = resolver.Browse(ctx, "_hue._tcp", "local.", entries)
 		if err != nil {
-			fmt.Printf("Failed to browse: %v\n", err)
+			l.Error("Failed to browse for bridges", map[string]interface{}{
+				"error": err,
+			})
 		}
 	}()
 
@@ -64,7 +66,7 @@ func DiscoverBridges(logger logger.Logger) ([]Bridge, error) {
 	}
 
 	// Try mDNS discovery first
-	if bridges, err := DiscoverBridgesWithMDNS(); err == nil && len(bridges) > 0 {
+	if bridges, err := DiscoverBridgesWithMDNS(logger); err == nil && len(bridges) > 0 {
 		cache := &BridgeCache{
 			Bridges:   bridges,
 			Timestamp: time.Now(),
