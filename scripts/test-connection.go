@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/richseviora/huego/internal/bridge"
 	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/internal/services/light"
-	"github.com/richseviora/huego/internal/store"
 	"github.com/richseviora/huego/pkg/logger"
 	"time"
 )
@@ -42,7 +42,7 @@ func TestConnection(ipAddress string, l logger.Logger) error {
 
 func main() {
 	l := logger.NewLogger()
-	bridges, err := store.DiscoverBridges(l)
+	bridges, err := bridge.DiscoverBridges(l)
 	if err != nil {
 		l.Error("Failed to discover bridges: %v\n", map[string]interface{}{
 			"error": err,

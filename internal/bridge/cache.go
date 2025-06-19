@@ -1,4 +1,4 @@
-package store
+package bridge
 
 import (
 	"encoding/json"

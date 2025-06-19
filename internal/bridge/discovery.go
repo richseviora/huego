@@ -1,4 +1,4 @@
-package store
+package bridge
 
 import (
 	"context"
@@ -9,12 +9,6 @@ import (
 	"net/http"
 	"time"
 )
-
-type Bridge struct {
-	ID                string `json:"id"`
-	InternalIPAddress string `json:"internalipaddress"`
-	Port              int    `json:"port"`
-}
 
 const url = "https://discovery.meethue.com"
 const discoveryTimeout = time.Second * 5

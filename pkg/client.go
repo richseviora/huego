@@ -3,14 +3,14 @@ package pkg
 import (
 	"context"
 	"errors"
+	"github.com/richseviora/huego/internal/bridge"
 	"github.com/richseviora/huego/internal/client"
-	"github.com/richseviora/huego/internal/store"
 	"github.com/richseviora/huego/pkg/logger"
 	client2 "github.com/richseviora/huego/pkg/resources/client"
 )
 
 func NewClientFromMDNS(logger logger.Logger) (client2.HueServiceClient, error) {
-	bridges, err := store.DiscoverBridgesWithMDNS(logger)
+	bridges, err := bridge.DiscoverBridgesWithMDNS(logger)
 	if err != nil {
 		return nil, err
 	}
