@@ -23,3 +23,13 @@ type HueServiceClient interface {
 	BehaviorScriptService() behavior_script.Service
 	MotionService() motion.Service
 }
+
+type PersistentClientProvider interface {
+	NewClientWithAddressAndKey(address string, key string) (HueServiceClient, error)
+	NewClientWithNewBridge() (string, HueServiceClient, error)
+	NewClientWithExistingBridge(bridgeId string) (HueServiceClient, error)
+}
+
+type ClientProvider interface {
+	NewClientWithAddressAndKey(address string, key string) (HueServiceClient, error)
+}

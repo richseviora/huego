@@ -6,18 +6,19 @@ import (
 	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/pkg/logger"
+	"os"
 	"time"
 )
 
 func TestConnection(ipAddress string, l logger.Logger) error {
-	c := client.NewAPIClient(ipAddress, client.EnvThenLocal, l)
-	err := c.Initialize(context.Background())
-	if err != nil {
-		l.Error("Initialization Failed: %v\n", map[string]interface{}{
-			"error": err,
-		})
-		return err
+	key := os.Getenv("HUE_KEY")
+	if key == "" {
+		l.Error("HUE_KEY not set")
+		return nil
 	}
+
+	c := client.NewAPIClient(ipAddress, key, l)
+
 	lightService := light.NewLightService(c, logger.NoopLogger{})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

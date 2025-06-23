@@ -12,11 +12,9 @@ import (
 	"github.com/richseviora/huego/pkg/resources/behavior_script"
 	"github.com/richseviora/huego/pkg/resources/motion"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
-	"github.com/richseviora/huego/internal/client/handlers"
 	device2 "github.com/richseviora/huego/internal/services/device"
 	"github.com/richseviora/huego/internal/services/light"
 	"github.com/richseviora/huego/internal/services/room"
@@ -24,7 +22,6 @@ import (
 	zigbee_connectivity2 "github.com/richseviora/huego/internal/services/zigbee_connectivity"
 	"github.com/richseviora/huego/internal/services/zone"
 	"github.com/richseviora/huego/internal/store"
-	"github.com/richseviora/huego/pkg/resources"
 	"github.com/richseviora/huego/pkg/resources/client"
 	"github.com/richseviora/huego/pkg/resources/common"
 	"github.com/richseviora/huego/pkg/resources/device"
@@ -52,6 +49,7 @@ const (
 type APIClient struct {
 	logger                    logger.Logger
 	baseURL                   string
+	applicationKey            string
 	httpClient                *http.Client
 	timeout                   time.Duration
 	keyStore                  store.KeyStore
@@ -117,37 +115,18 @@ var (
 type ClientOption func(*APIClient)
 
 // NewAPIClient creates a new API client instance
-func NewAPIClient(ipAddress string, initMode InitMode, logger logger.Logger, opts ...ClientOption) *APIClient {
-	var keyStore store.KeyStore = nil
-	var err error = nil
-	if initMode != EnvOnly {
-		keyStore, err = store.NewDiskKeyStore("hue-keys.json")
-		if err != nil {
-			logger.Error("Failed to Load Key Store", map[string]interface{}{
-				"error": err,
-			})
-			panic(err)
-		}
-	}
-
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
+func NewAPIClient(ipAddress string, applicationKey string, logger logger.Logger, opts ...ClientOption) *APIClient {
 	baseUrl := ipAddress
 	if !strings.HasPrefix(baseUrl, "https://") && !strings.HasPrefix(baseUrl, "http://") {
 		baseUrl = "https://" + baseUrl
 	}
 	c := &APIClient{
-		logger:  logger,
-		baseURL: baseUrl,
-		httpClient: &http.Client{
-			Transport: tr,
-			Timeout:   30 * time.Second,
-		},
-		timeout:  30 * time.Second,
-		keyStore: keyStore,
-		initMode: initMode,
-		limiter:  rate.NewLimiter(rate.Every(time.Second/10), 1),
+		logger:         logger,
+		baseURL:        baseUrl,
+		httpClient:     NewHTTPClient(),
+		timeout:        30 * time.Second,
+		applicationKey: applicationKey,
+		limiter:        rate.NewLimiter(rate.Every(time.Second/10), 1),
 	}
 	c.sceneService = scene.NewSceneService(c, c.logger)
 	c.lightService = light.NewLightService(c, c.logger)
@@ -166,17 +145,14 @@ func NewAPIClient(ipAddress string, initMode InitMode, logger logger.Logger, opt
 	return c
 }
 
-func (c *APIClient) Initialize(ctx context.Context) error {
-	key, err := c.getApplicationKey(ctx)
-	if err != nil && !errors.Is(err, store.ErrKeyNotFound) {
-		return err
+func NewHTTPClient() *http.Client {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	if key != "" {
-		// Key Set do nothing
-		return nil
+	return &http.Client{
+		Transport: tr,
+		Timeout:   30 * time.Second,
 	}
-	// Get Attempt to Set Key
-	return createApplicationKey(ctx, c)
 }
 
 func (c *APIClient) BaseURL() string {
@@ -188,15 +164,10 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	key, err := c.getApplicationKey(ctx)
-	if err != nil && !errors.Is(err, store.ErrKeyNotFound) {
-		return nil, err
-	}
-	if key != "" {
-		req.Header.Set("hue-application-key", key)
-	}
+	key := c.applicationKey
+	req.Header.Set("hue-application-key", key)
 
-	err = c.limiter.Wait(ctx)
+	err := c.limiter.Wait(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -217,67 +188,25 @@ func (c *APIClient) Do(ctx context.Context, req *http.Request) (*http.Response, 
 	return response, err
 }
 
-func (c *APIClient) getApplicationKey(ctx context.Context) (string, error) {
-	switch c.initMode {
-	case EnvOnly:
-		key := os.Getenv("HUE_KEY")
-		if key == "" {
-			return "", store.ErrKeyNotFound
-		}
-		return key, nil
-	case LocalOnly:
-		key, err := c.keyStore.Get("application-key")
-		if err != nil {
-			return "", err
-		}
-		return key.(string), nil
-	default: // EnvThenLocal
-		if envKey := os.Getenv("HUE_KEY"); envKey != "" {
-			return envKey, nil
-		}
-		key, err := c.keyStore.Get("application-key")
-		if err != nil {
-			return "", err
-		}
-		return key.(string), nil
-	}
-}
-
-func (c *APIClient) setApplicationKey(ctx context.Context, key string) error {
-	if c.initMode == EnvOnly {
-		return errors.New("key store is disabled")
-	}
-	return c.keyStore.Set("application-key", key)
-}
-
-func createApplicationKey(ctx context.Context, c *APIClient) error {
+func createApplicationKey(ctx context.Context, c *BridgeRegistrationClient) (string, error) {
 	res, err := c.registerDevice(ctx, "huego", "1234567890")
 	if err != nil {
 		c.Logger().Error("Failed to register device", map[string]interface{}{
 			"error": err,
 		})
-		return err
+		return "", err
 	}
 	for _, response := range *res {
 		if response.Success != nil {
-			return c.setApplicationKey(ctx, response.Success.Username)
+			return response.Success.ClientKey, nil
 		}
 		if response.Error != nil {
 			c.Logger().Error("Failed to register device", map[string]interface{}{
 				"error": err,
 			})
-			return errors.New("failed to register device")
+			return "", errors.New("failed to register device")
 		}
 	}
 
-	return errors.New("failed to register device")
-}
-
-// registerDevice sends a registration request to the Hue bridge
-func (c *APIClient) registerDevice(ctx context.Context, appName, instanceName string) (*resources.BridgeRegistrationResponseBody, error) {
-	request := resources.BridgeRegistrationRequest{
-		DeviceType:        appName + "#" + instanceName,
-		GenerateClientKey: true,
-	}
-	return handlers.Post[resources.BridgeRegistrationResponseBody](ctx, "/api", request, c)
+	return "", errors.New("failed to register device")
 }

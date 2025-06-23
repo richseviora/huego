@@ -30,12 +30,7 @@ func Test_APIClientParse(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	client := NewAPIClient(server.URL, LocalOnly, logger.NoopLogger{})
-	client.setApplicationKey(context.Background(), "1234567890")
-	err := client.Initialize(context.Background())
-	if err != nil {
-		t.Error(err)
-	}
+	client := NewAPIClient(server.URL, "1234567890", logger.NoopLogger{})
 	result, err := client.roomService.GetRoom(context.Background(), "123")
 	if err != nil {
 		t.Error(err)
@@ -71,12 +66,7 @@ func Test_APIClient(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	client := NewAPIClient(server.URL, LocalOnly, logger.NoopLogger{})
-	client.setApplicationKey(context.Background(), "1234567890")
-	err := client.Initialize(context.Background())
-	if err != nil {
-		t.Error(err)
-	}
+	client := NewAPIClient(server.URL, "1234567890", logger.NoopLogger{})
 	result, err := client.roomService.CreateRoom(context.Background(), room2.RoomCreate{
 		Children: []common.Reference{
 			common.Reference{

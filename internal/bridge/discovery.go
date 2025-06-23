@@ -48,26 +48,11 @@ func DiscoverBridgesWithMDNS(l logger.Logger) ([]Bridge, error) {
 }
 
 func DiscoverBridges(logger logger.Logger) ([]Bridge, error) {
-	// Try to load from cache first
-	if cache, err := LoadBridgeCache(); err == nil {
-		// Use cache if it's less than 1 hour old
-		if time.Since(cache.Timestamp) < time.Hour {
-			logger.Info("Found Bridges in Cache", map[string]interface{}{
-				"bridges": len(cache.Bridges),
-			})
-			return cache.Bridges, nil
-		}
-	}
-
+	var bridges []Bridge
 	// Try mDNS discovery first
 	if bridges, err := DiscoverBridgesWithMDNS(logger); err == nil && len(bridges) > 0 {
-		cache := &BridgeCache{
-			Bridges:   bridges,
-			Timestamp: time.Now(),
-		}
-		_ = SaveBridgeCache(cache)
 		logger.Info("Found Bridges via MDNS", map[string]interface{}{
-			"bridges": len(cache.Bridges),
+			"bridges": len(bridges),
 		})
 		return bridges, nil
 	}
@@ -76,21 +61,16 @@ func DiscoverBridges(logger logger.Logger) ([]Bridge, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
+		logger.Error("failed to load bridge via external discovery", map[string]interface{}{
+			"error": err,
+		})
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var bridges []Bridge
 	if err := json.NewDecoder(resp.Body).Decode(&bridges); err != nil {
 		return nil, err
 	}
-
-	// Save to cache
-	cache := &BridgeCache{
-		Bridges:   bridges,
-		Timestamp: time.Now(),
-	}
-	_ = SaveBridgeCache(cache)
 
 	logger.Info("Found Bridges via HTTP", map[string]interface{}{
 		"bridges": len(bridges),

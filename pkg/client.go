@@ -1,26 +1,23 @@
 package pkg
 
 import (
-	"context"
-	"errors"
 	"github.com/richseviora/huego/internal/bridge"
-	"github.com/richseviora/huego/internal/client"
 	"github.com/richseviora/huego/pkg/logger"
 	client2 "github.com/richseviora/huego/pkg/resources/client"
 )
 
-func NewClientFromMDNS(logger logger.Logger) (client2.HueServiceClient, error) {
-	bridges, err := bridge.DiscoverBridgesWithMDNS(logger)
+func NewClientProvider(logger logger.Logger) (client2.ClientProvider, error) {
+	provider, err := bridge.NewBuilderWithoutPath(logger)
 	if err != nil {
 		return nil, err
 	}
-	if len(bridges) == 0 {
-		return nil, errors.New("no bridges found")
-	}
-	c := client.NewAPIClient(bridges[0].InternalIPAddress, client.EnvOnly, logger)
-	err = c.Initialize(context.Background())
+	return provider, nil
+}
+
+func NewClientProviderWithPath(path string, logger logger.Logger) (client2.ClientProvider, error) {
+	provider, err := bridge.NewBuilderWithPath(path, logger)
 	if err != nil {
 		return nil, err
 	}
-	return c, nil
+	return provider, nil
 }
