@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"github.com/richseviora/huego/internal/client/handlers"
 	"github.com/richseviora/huego/pkg/logger"
@@ -59,8 +60,13 @@ func (c *BridgeRegistrationClient) RegisterDevice(ctx context.Context, appName, 
 	if appName == "" {
 		appName = "huego"
 	}
+
 	if instanceName == "" {
-		instanceName = "default"
+		var err error
+		instanceName, err = generateRandomString(6)
+		if err != nil {
+			return "", err
+		}
 	}
 	response, err := c.registerDevice(ctx, appName, instanceName)
 	if err != nil {
@@ -86,3 +92,15 @@ func (c *BridgeRegistrationClient) registerDevice(ctx context.Context, appName, 
 }
 
 var LinkButtonNotPressedError = errors.New("link button not pressed")
+
+func generateRandomString(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	for i := range b {
+		b[i] = charset[int(b[i])%len(charset)]
+	}
+	return string(b), nil
+}

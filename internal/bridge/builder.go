@@ -49,7 +49,7 @@ func (b *Builder) NewClientWithNewBridge() (string, client.HueServiceClient, err
 		return "", nil, err
 	}
 	r := client2.NewBridgeRegistrationClient(bridge.InternalIPAddress, b.Logger)
-	key, err := r.RegisterDevice(context.Background(), "huego", "default")
+	key, err := r.RegisterDevice(context.Background(), "huego", "")
 	if err != nil {
 		b.Logger.Error("Failed to register device", map[string]interface{}{
 			"error":    err,
